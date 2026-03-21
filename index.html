@@ -5,33 +5,46 @@
   <title>Ticket Manager</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
 
-  <!-- اجازهٔ دوربین برای Safari -->
   <meta http-equiv="Permissions-Policy" content="camera=*" />
 
   <link rel="stylesheet" href="style.css" />
 
-  <!-- jsQR برای اسکن QR -->
   <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+
+  <style>
+    .lang-switcher {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 5px;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 
 <body>
   <div class="app">
     <header class="app-header">
-      <h1>مدیریت تیکت</h1>
+      <h1 id="titleText">مدیریت تیکت</h1>
+
+      <!-- انتخاب زبان -->
+      <select id="langSelect" class="lang-switcher">
+        <option value="fa">👑 فارسی</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="en">🇬🇧 English</option>
+      </select>
     </header>
 
     <main class="app-main">
 
-      <!-- جستجو -->
       <section class="search-box">
         <input id="searchInput" type="text" placeholder="جستجو..." />
       </section>
 
-      <!-- مرتب‌سازی -->
       <section class="sort-box">
         <select id="sortSelect">
           <option value="newest">جدیدترین</option>
@@ -40,7 +53,6 @@
         </select>
       </section>
 
-      <!-- فرم تیکت -->
       <section class="ticket-form">
         <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
         <input id="ticketNote" type="text" placeholder="یادداشت" />
@@ -51,32 +63,104 @@
         </div>
       </section>
 
-      <!-- بخش QR -->
       <section id="qrSection" class="qr-section" style="display:none;">
         <video id="qrVideo" class="qr-video" muted playsinline autoplay></video>
         <canvas id="qrCanvas" style="display:none;"></canvas>
-        <div class="qr-hint">دوربین را روی QR نگه دارید…</div>
+        <div class="qr-hint" id="qrHint">دوربین را روی QR نگه دارید…</div>
         <div id="qrResult" class="qr-result"></div>
         <button id="stopQrBtn" class="secondary-btn" style="margin-top:8px;">توقف اسکن</button>
       </section>
 
-      <!-- لیست تیکت‌ها -->
       <section class="ticket-list-section">
-        <h2>تیکت‌ها</h2>
+        <h2 id="ticketsHeader">تیکت‌ها</h2>
         <ul id="ticketList" class="ticket-list"></ul>
       </section>
 
     </main>
   </div>
 
-  <!-- Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
   </script>
 
-  <!-- منطق اسکن QR -->
+  <!-- ترجمه‌ها -->
+  <script>
+    const translations = {
+      fa: {
+        title: "مدیریت تیکت",
+        search: "جستجو...",
+        newest: "جدیدترین",
+        oldest: "قدیمی‌ترین",
+        undone: "انجام‌نشده‌ها",
+        ticketTitle: "عنوان تیکت",
+        ticketNote: "یادداشت",
+        addTicket: "افزودن تیکت",
+        scanQR: "اسکن QR",
+        stopScan: "توقف اسکن",
+        tickets: "تیکت‌ها",
+        cameraHint: "دوربین را روی QR نگه دارید…"
+      },
+      de: {
+        title: "Ticketverwaltung",
+        search: "Suche...",
+        newest: "Neueste",
+        oldest: "Älteste",
+        undone: "Unerledigt",
+        ticketTitle: "Ticket Titel",
+        ticketNote: "Notiz",
+        addTicket: "Ticket hinzufügen",
+        scanQR: "QR scannen",
+        stopScan: "Scan stoppen",
+        tickets: "Tickets",
+        cameraHint: "Halten Sie die Kamera auf den QR-Code…"
+      },
+      en: {
+        title: "Ticket Manager",
+        search: "Search...",
+        newest: "Newest",
+        oldest: "Oldest",
+        undone: "Undone",
+        ticketTitle: "Ticket Title",
+        ticketNote: "Note",
+        addTicket: "Add Ticket",
+        scanQR: "Scan QR",
+        stopScan: "Stop Scan",
+        tickets: "Tickets",
+        cameraHint: "Hold the camera over the QR…"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = translations[lang];
+
+      document.getElementById("titleText").textContent = t.title;
+      document.getElementById("searchInput").placeholder = t.search;
+
+      document.querySelector("#sortSelect option[value='newest']").textContent = t.newest;
+      document.querySelector("#sortSelect option[value='oldest']").textContent = t.oldest;
+      document.querySelector("#sortSelect option[value='undone']").textContent = t.undone;
+
+      document.getElementById("ticketTitle").placeholder = t.ticketTitle;
+      document.getElementById("ticketNote").placeholder = t.ticketNote;
+
+      document.getElementById("addTicketBtn").textContent = t.addTicket;
+      document.getElementById("scanQrBtn").textContent = t.scanQR;
+      document.getElementById("stopQrBtn").textContent = t.stopScan;
+
+      document.getElementById("ticketsHeader").textContent = t.tickets;
+      document.getElementById("qrHint").textContent = t.cameraHint;
+    }
+
+    document.getElementById("langSelect").addEventListener("change", (e) => {
+      applyLanguage(e.target.value);
+    });
+
+    applyLanguage("fa");
+  </script>
+
+  <!-- QR Scanner -->
   <script>
     let qrStream = null;
     let qrScanning = false;
@@ -92,11 +176,6 @@
       qrSection.style.display = "block";
       resultBox.textContent = "";
 
-      video.setAttribute("playsinline", "true");
-      video.setAttribute("autoplay", "true");
-      video.setAttribute("muted", "true");
-
-      // اگر قبلاً استریم داریم، از همان استفاده می‌کنیم
       if (!qrStream) {
         try {
           qrStream = await navigator.mediaDevices.getUserMedia({
@@ -104,7 +183,6 @@
             audio: false
           });
         } catch (e) {
-          // هیچ پیام اضافی؛ فقط دیالوگ iOS
           return;
         }
       }
@@ -117,7 +195,7 @@
       function scanLoop() {
         if (!qrScanning || !qrStream || !qrStream.active) return;
 
-        if (video.videoWidth === 0 || video.videoHeight === 0) {
+        if (video.videoWidth === 0) {
           requestAnimationFrame(scanLoop);
           return;
         }
@@ -133,7 +211,6 @@
         if (code) {
           const text = code.data;
 
-          // از تریگر پشت‌سرهم روی همان QR جلوگیری می‌کنیم
           if (text !== lastScannedText) {
             lastScannedText = text;
 
@@ -141,17 +218,13 @@
             document.getElementById("ticketTitle").value = text;
 
             if (text.startsWith("http://") || text.startsWith("https://")) {
-              // تلاش برای باز کردن در تب/لایهٔ جدا
               let opened = null;
               try {
                 opened = window.open(text, "_blank");
               } catch (e) {
                 opened = null;
               }
-              // اگر PWA اجازه نداد، همان صفحه را به لینک ببریم
-              if (!opened) {
-                window.location.href = text;
-              }
+              if (!opened) window.location.href = text;
             }
           }
         }
@@ -168,23 +241,16 @@
       qrScanning = false;
       lastScannedText = null;
 
-      // این‌جا واقعاً دوربین را خاموش می‌کنیم
       if (qrStream) {
         qrStream.getTracks().forEach(t => t.stop());
         qrStream = null;
       }
     }
 
-    document.getElementById("scanQrBtn").addEventListener("click", () => {
-      startQRScanner();
-    });
-
-    document.getElementById("stopQrBtn").addEventListener("click", () => {
-      stopQRScanner();
-    });
+    document.getElementById("scanQrBtn").addEventListener("click", startQRScanner);
+    document.getElementById("stopQrBtn").addEventListener("click", stopQRScanner);
   </script>
 
-  <!-- اسکریپت اصلی برنامه (تیکت‌ها، جستجو، مرتب‌سازی و...) -->
   <script src="script.js"></script>
 
 </body>
