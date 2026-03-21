@@ -6,13 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#111111">
     <link rel="manifest" href="manifest.webmanifest">
+
     <style>
         body {
             margin: 0;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: #111;
             color: #f5f5f5;
+            transition: background 0.2s, color 0.2s;
         }
+
+        /* LIGHT THEME */
+        body.light {
+            background: #f5f5f5;
+            color: #111;
+        }
+        body.light .card {
+            background: #fff;
+        }
+        body.light input, body.light textarea {
+            background: #fff;
+            color: #111;
+            border: 1px solid #ccc;
+        }
+        body.light .ticket-item {
+            background: #eee;
+        }
+        body.light .ticket-note {
+            color: #555;
+        }
+        body.light .btn-primary {
+            background: #00c853;
+            color: #fff;
+        }
+        body.light .btn-danger {
+            background: #d32f2f;
+        }
+        body.light .theme-btn {
+            background: #ddd;
+            color: #111;
+        }
+
+        /* GENERAL UI */
         .app {
             max-width: 480px;
             margin: 0 auto;
@@ -90,10 +125,33 @@
             color: #777;
             margin-top: 6px;
         }
+
+        /* THEME BUTTONS */
+        .theme-btn {
+            border: none;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            cursor: pointer;
+            background: #333;
+            color: #fff;
+        }
+        .theme-btn.active {
+            border: 2px solid #00c853;
+        }
     </style>
 </head>
+
 <body>
 <div class="app">
+
+    <!-- THEME SWITCHER -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="theme-btn" data-theme="auto">خودکار</button>
+        <button class="theme-btn" data-theme="light">روشن</button>
+        <button class="theme-btn" data-theme="dark">تیره</button>
+    </div>
+
     <h1>مدیر بلیت</h1>
 
     <div class="card">
@@ -125,6 +183,46 @@
     const ticketsContainer = document.getElementById("ticketsContainer");
     const emptyState = document.getElementById("emptyState");
     const countLabel = document.getElementById("countLabel");
+
+    /* ---------------- THEME SYSTEM ---------------- */
+
+    function applyTheme(theme) {
+        const root = document.body;
+        root.classList.remove("light", "dark");
+
+        if (theme === "light") {
+            root.classList.add("light");
+        } else if (theme === "dark") {
+            root.classList.add("dark");
+        } else {
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            root.classList.add(prefersDark ? "dark" : "light");
+        }
+
+        document.querySelectorAll(".theme-btn").forEach(btn => {
+            btn.classList.remove("active");
+            if (btn.dataset.theme === theme) {
+                btn.classList.add("active");
+            }
+        });
+    }
+
+    function loadTheme() {
+        const saved = localStorage.getItem("theme-choice") || "auto";
+        applyTheme(saved);
+    }
+
+    document.querySelectorAll(".theme-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const choice = btn.dataset.theme;
+            localStorage.setItem("theme-choice", choice);
+            applyTheme(choice);
+        });
+    });
+
+    loadTheme();
+
+    /* ---------------- TICKET SYSTEM ---------------- */
 
     function loadTickets() {
         try {
@@ -206,12 +304,12 @@
         renderTickets();
     });
 
-    // initial render
     renderTickets();
 
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("service-worker.js");
     }
 </script>
+
 </body>
 </html>
