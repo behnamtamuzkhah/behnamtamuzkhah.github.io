@@ -14,19 +14,28 @@
 
     <main class="app-main">
 
-      <!-- 🔍 بخش جستجو -->
+      <!-- 🔍 جستجو -->
       <section class="search-box">
         <input id="searchInput" type="text" placeholder="جستجو..." />
       </section>
 
-      <!-- فرم افزودن تیکت -->
+      <!-- 🔽 مرتب‌سازی -->
+      <section class="sort-box">
+        <select id="sortSelect">
+          <option value="newest">جدیدترین</option>
+          <option value="oldest">قدیمی‌ترین</option>
+          <option value="undone">انجام‌نشده‌ها</option>
+        </select>
+      </section>
+
+      <!-- ➕ افزودن تیکت -->
       <section class="ticket-form">
         <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
         <input id="ticketNote" type="text" placeholder="یادداشت" />
         <button id="addTicketBtn" class="primary-btn">افزودن تیکت</button>
       </section>
 
-      <!-- لیست تیکت‌ها -->
+      <!-- 📋 لیست تیکت‌ها -->
       <section class="ticket-list-section">
         <h2>تیکت‌ها</h2>
         <ul id="ticketList" class="ticket-list"></ul>
