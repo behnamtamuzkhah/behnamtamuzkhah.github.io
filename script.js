@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sorted.forEach(t => renderTicket(t));
   });
 
-  // QR Scanner با VisionKit / BarcodeDetector
+  // QR Scanner با BarcodeDetector
   scanQrBtn.addEventListener("click", async () => {
     if (!scanning) {
       try {
@@ -143,6 +143,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         qrVideo.srcObject = stream;
+
+        qrVideo.setAttribute("playsinline", true);
+        qrVideo.setAttribute("muted", true);
+        qrVideo.setAttribute("autoplay", true);
+        qrVideo.load();
+
         await qrVideo.play();
 
         qrSection.style.display = "block";
