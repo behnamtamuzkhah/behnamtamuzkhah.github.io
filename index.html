@@ -32,7 +32,16 @@
       <section class="ticket-form">
         <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
         <input id="ticketNote" type="text" placeholder="یادداشت" />
-        <button id="addTicketBtn" class="primary-btn">افزودن تیکت</button>
+        <div class="form-actions">
+          <button id="addTicketBtn" class="primary-btn">افزودن تیکت</button>
+          <button id="scanQrBtn" class="secondary-btn">اسکن QR</button>
+        </div>
+      </section>
+
+      <!-- 🎥 پیش‌نمایش اسکن -->
+      <section class="qr-section" id="qrSection">
+        <video id="qrVideo" class="qr-video" muted playsinline></video>
+        <div class="qr-hint">دوربین را روی QR نگه دار…</div>
       </section>
 
       <!-- 📋 لیست تیکت‌ها -->
@@ -44,6 +53,7 @@
     </main>
   </div>
 
+  <script src="qr-scanner.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
