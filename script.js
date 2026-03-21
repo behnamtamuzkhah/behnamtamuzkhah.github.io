@@ -3,20 +3,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const noteInput = document.getElementById("ticketNote");
   const addBtn = document.getElementById("addTicketBtn");
   const ticketList = document.getElementById("ticketList");
+  const searchInput = document.getElementById("searchInput");
+  const sortSelect = document.getElementById("sortSelect");
 
-  // --- Load saved tickets ---
   let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
+
   tickets.forEach(t => renderTicket(t));
 
-  // --- Add new ticket ---
+  function saveTickets() {
+    localStorage.setItem("tickets", JSON.stringify(tickets));
+  }
+
   addBtn.addEventListener("click", () => {
     const title = titleInput.value.trim();
     const note = noteInput.value.trim();
 
-    if (!title) {
-      alert("لطفاً عنوان تیکت را وارد کنید");
-      return;
-    }
+    if (!title) return alert("لطفاً عنوان تیکت را وارد کنید");
 
     const ticket = {
       id: Date.now(),
@@ -31,15 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     titleInput.value = "";
     noteInput.value = "";
-    titleInput.focus();
   });
 
-  // --- Save to localStorage ---
-  function saveTickets() {
-    localStorage.setItem("tickets", JSON.stringify(tickets));
-  }
-
-  // --- Render ticket item ---
   function renderTicket(ticket) {
     const li = document.createElement("li");
     li.className = "ticket-item";
@@ -68,14 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteBtn.className = "ticket-btn delete";
     deleteBtn.textContent = "حذف";
 
-    // --- Toggle done ---
     doneBtn.addEventListener("click", () => {
       ticket.done = !ticket.done;
       saveTickets();
       li.classList.toggle("done");
     });
 
-    // --- Delete ticket ---
     deleteBtn.addEventListener("click", () => {
       tickets = tickets.filter(t => t.id !== ticket.id);
       saveTickets();
@@ -93,4 +86,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ticketList.appendChild(li);
   }
+
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim().toLowerCase();
+
+    document.querySelectorAll(".ticket-item").forEach(item => {
+      const title = item.querySelector(".ticket-title").textContent.toLowerCase();
+      const note = item.querySelector(".ticket-note").textContent.toLowerCase();
+
+      item.style.display = (title.includes(q) || note.includes(q)) ? "flex" : "none";
+    });
+  });
+
+  sortSelect.addEventListener("change", () => {
+    const mode = sortSelect.value;
+
+    let sorted = [...tickets];
+
+    if (mode === "newest") sorted.sort((a, b) => b.id - a.id);
+    else if (mode === "oldest") sorted.sort((a, b) => a.id - b.id);
+    else if (mode === "undone") sorted.sort((a, b) => Number(a.done) - Number(b.done));
+
+    ticketList.innerHTML = "";
+    sorted.forEach(t => renderTicket(t));
+  });
 });
