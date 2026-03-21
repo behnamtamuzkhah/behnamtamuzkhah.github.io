@@ -5,8 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const ticketList = document.getElementById("ticketList");
   const searchInput = document.getElementById("searchInput");
   const sortSelect = document.getElementById("sortSelect");
+  const scanQrBtn = document.getElementById("scanQrBtn");
+  const qrSection = document.getElementById("qrSection");
+  const qrVideo = document.getElementById("qrVideo");
+
+  // مسیر worker چون در روت است
+  QrScanner.WORKER_PATH = 'qr-scanner-worker.min.js';
 
   let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
+  let qrScanner = null;
+  let scanning = false;
 
   tickets.forEach(t => renderTicket(t));
 
@@ -59,6 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
     doneBtn.className = "ticket-btn done";
     doneBtn.textContent = "انجام شد";
 
+    const editBtn = document.createElement("button");
+    editBtn.className = "ticket-btn edit";
+    editBtn.textContent = "ویرایش";
+
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "ticket-btn delete";
     deleteBtn.textContent = "حذف";
@@ -75,7 +87,23 @@ document.addEventListener("DOMContentLoaded", () => {
       li.remove();
     });
 
+    editBtn.addEventListener("click", () => {
+      const newTitle = prompt("عنوان جدید:", ticket.title);
+      if (newTitle === null || newTitle.trim() === "") return;
+
+      const newNote = prompt("یادداشت جدید:", ticket.note);
+      if (newNote === null) return;
+
+      ticket.title = newTitle.trim();
+      ticket.note = newNote.trim();
+      saveTickets();
+
+      titleEl.textContent = ticket.title;
+      noteEl.textContent = ticket.note;
+    });
+
     actions.appendChild(doneBtn);
+    actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
 
     header.appendChild(titleEl);
@@ -87,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ticketList.appendChild(li);
   }
 
+  // جستجو
   searchInput.addEventListener("input", () => {
     const q = searchInput.value.trim().toLowerCase();
 
@@ -98,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // مرتب‌سازی
   sortSelect.addEventListener("change", () => {
     const mode = sortSelect.value;
 
@@ -110,4 +140,42 @@ document.addEventListener("DOMContentLoaded", () => {
     ticketList.innerHTML = "";
     sorted.forEach(t => renderTicket(t));
   });
+
+  // QR Scanner
+  scanQrBtn.addEventListener("click", async () => {
+    try {
+      if (!scanning) {
+        if (!qrScanner) {
+          qrScanner = new QrScanner(
+            qrVideo,
+            result => {
+              // متن QR را در یادداشت می‌گذاریم (یا اگر خواستی در عنوان)
+              noteInput.value = result;
+              stopScanning();
+            },
+            {
+              returnDetailedScanResult: false
+            }
+          );
+        }
+        await qrScanner.start();
+        qrSection.style.display = "block";
+        scanning = true;
+        scanQrBtn.textContent = "توقف اسکن";
+      } else {
+        stopScanning();
+      }
+    } catch (e) {
+      alert("دسترسی به دوربین ممکن نیست.");
+    }
+  });
+
+  function stopScanning() {
+    if (qrScanner) {
+      qrScanner.stop();
+    }
+    qrSection.style.display = "none";
+    scanning = false;
+    scanQrBtn.textContent = "اسکن QR";
+  }
 });
