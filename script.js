@@ -11,8 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const qrVideo = document.getElementById("qrVideo");
 
   let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
-  let qrScanner = null;
   let scanning = false;
+  let stream = null;
+  let detector = null;
 
   tickets.forEach(t => renderTicket(t));
 
@@ -131,33 +132,59 @@ document.addEventListener("DOMContentLoaded", () => {
     sorted.forEach(t => renderTicket(t));
   });
 
-  // QR Scanner کلاسیک
+  // QR Scanner با VisionKit / BarcodeDetector
   scanQrBtn.addEventListener("click", async () => {
     if (!scanning) {
-      qrSection.style.display = "block";
-
-      qrScanner = new QRScanner(qrVideo, result => {
-        noteInput.value = result;
-        stopScan();
-      });
-
       try {
-        await qrScanner.start();
+        detector = new BarcodeDetector({ formats: ["qr_code"] });
+
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }
+        });
+
+        qrVideo.srcObject = stream;
+        await qrVideo.play();
+
+        qrSection.style.display = "block";
         scanning = true;
         scanQrBtn.textContent = "توقف اسکن";
+
+        scanLoop();
       } catch (err) {
         alert("دسترسی به دوربین ممکن نیست.");
-        stopScan();
       }
     } else {
       stopScan();
     }
   });
 
+  async function scanLoop() {
+    if (!scanning) return;
+
+    try {
+      const results = await detector.detect(qrVideo);
+
+      if (results.length > 0) {
+        const qr = results[0].rawValue;
+        noteInput.value = qr;
+        stopScan();
+        return;
+      }
+    } catch (e) {
+      console.log("Detector error:", e);
+    }
+
+    requestAnimationFrame(scanLoop);
+  }
+
   function stopScan() {
-    if (qrScanner) qrScanner.stop();
-    qrSection.style.display = "none";
     scanning = false;
     scanQrBtn.textContent = "اسکن QR";
+    qrSection.style.display = "none";
+
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+    }
   }
 });
