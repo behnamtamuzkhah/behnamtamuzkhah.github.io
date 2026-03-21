@@ -89,8 +89,7 @@
           audio: false
         });
       } catch (e) {
-        // پیام اشتباه حذف شد
-        return;
+        return; // پیام خطا حذف شد
       }
 
       video.srcObject = stream;
@@ -117,10 +116,16 @@
           // ذخیره متن
           document.getElementById("ticketTitle").value = text;
 
-          // اگر لینک بود → در Safari باز کن
+          // اگر لینک بود → با ترفند iOS در Safari باز کن
           if (text.startsWith("http://") || text.startsWith("https://")) {
             setTimeout(() => {
-              window.open(text, "_blank");
+              const a = document.createElement("a");
+              a.href = text;
+              a.target = "_blank";
+              a.rel = "noopener";
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
             }, 800);
           }
 
