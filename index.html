@@ -5,14 +5,15 @@
   <title>Ticket Manager</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
 
-  <!-- اجازهٔ دوربین برای Safari -->
   <meta http-equiv="Permissions-Policy" content="camera=*" />
 
   <link rel="stylesheet" href="style.css" />
+
+  <!-- jsQR -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
 </head>
 
 <body>
@@ -23,12 +24,10 @@
 
     <main class="app-main">
 
-      <!-- جستجو -->
       <section class="search-box">
         <input id="searchInput" type="text" placeholder="جستجو..." />
       </section>
 
-      <!-- مرتب‌سازی -->
       <section class="sort-box">
         <select id="sortSelect">
           <option value="newest">جدیدترین</option>
@@ -37,7 +36,6 @@
         </select>
       </section>
 
-      <!-- فرم تیکت -->
       <section class="ticket-form">
         <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
         <input id="ticketNote" type="text" placeholder="یادداشت" />
@@ -48,14 +46,13 @@
         </div>
       </section>
 
-      <!-- بخش QR -->
       <section id="qrSection" class="qr-section" style="display:none;">
         <video id="qrVideo" class="qr-video" muted playsinline autoplay></video>
+        <canvas id="qrCanvas" style="display:none;"></canvas>
         <div class="qr-hint">دوربین را روی QR نگه دارید…</div>
         <div id="qrResult" class="qr-result"></div>
       </section>
 
-      <!-- لیست تیکت‌ها -->
       <section class="ticket-list-section">
         <h2>تیکت‌ها</h2>
         <ul id="ticketList" class="ticket-list"></ul>
@@ -64,17 +61,18 @@
     </main>
   </div>
 
-  <!-- Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
   </script>
 
-  <!-- QR Scanner نهایی -->
+  <!-- نسخهٔ Ultra-Fallback با jsQR -->
   <script>
     async function startQRScanner() {
       const video = document.getElementById("qrVideo");
+      const canvas = document.getElementById("qrCanvas");
+      const ctx = canvas.getContext("2d");
       const resultBox = document.getElementById("qrResult");
       const qrSection = document.getElementById("qrSection");
 
@@ -99,47 +97,36 @@
       video.srcObject = stream;
       await video.play();
 
-      let detector = null;
-      if ("BarcodeDetector" in window) {
-        try {
-          detector = new BarcodeDetector({ formats: ["qr_code"] });
-        } catch (e) {
-          detector = null;
-        }
-      }
-
-      async function scanLoop() {
+      function scan() {
         if (!stream.active) return;
 
-        try {
-          if (detector) {
-            const bitmap = await createImageBitmap(video);
-            const codes = await detector.detect(bitmap);
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
 
-            if (codes.length > 0) {
-              const text = codes[0].rawValue;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-              resultBox.textContent = "نتیجه: " + text;
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, canvas.width, canvas.height);
 
-              stream.getTracks().forEach(t => t.stop());
+        if (code) {
+          const text = code.data;
+          resultBox.textContent = "نتیجه: " + text;
 
-              if (text.startsWith("http://") || text.startsWith("https://")) {
-                window.location.href = text;
-                return;
-              }
+          stream.getTracks().forEach(t => t.stop());
 
-              document.getElementById("ticketTitle").value = text;
-              return;
-            }
+          if (text.startsWith("http://") || text.startsWith("https://")) {
+            window.location.href = text;
+            return;
           }
-        } catch (err) {
-          console.log("Scan error:", err);
+
+          document.getElementById("ticketTitle").value = text;
+          return;
         }
 
-        requestAnimationFrame(scanLoop);
+        requestAnimationFrame(scan);
       }
 
-      scanLoop();
+      scan();
     }
 
     document.getElementById("scanQrBtn").addEventListener("click", () => {
@@ -147,7 +134,6 @@
     });
   </script>
 
-  <!-- اسکریپت اصلی -->
   <script src="script.js"></script>
 
 </body>
