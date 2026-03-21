@@ -211,3 +211,15 @@ body {
 .ticket-list li {
   line-height: 1.6;
 }
+.ticket-list li,
+.ticket-list li * {
+  word-break: break-all !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  max-width: 100% !important;
+  display: block;
+}
+.ticket-list li {
+  padding: 10px;
+  line-height: 1.6;
+}
