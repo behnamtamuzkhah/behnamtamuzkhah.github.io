@@ -202,3 +202,12 @@ body {
   background: #5856d6;
   color: #fff;
 }
+.ticket-list li {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+}
+.ticket-list li {
+  line-height: 1.6;
+}
