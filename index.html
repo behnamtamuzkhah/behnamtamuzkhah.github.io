@@ -67,7 +67,7 @@
     }
   </script>
 
-  <!-- نسخهٔ Ultra-Fallback با jsQR -->
+  <!-- نسخهٔ Ultra-Fallback با رفتار جدید -->
   <script>
     async function startQRScanner() {
       const video = document.getElementById("qrVideo");
@@ -112,14 +112,19 @@
           const text = code.data;
           resultBox.textContent = "نتیجه: " + text;
 
+          // توقف دوربین
           stream.getTracks().forEach(t => t.stop());
 
+          // همیشه متن را ذخیره کن
+          document.getElementById("ticketTitle").value = text;
+
+          // اگر لینک بود → بعد از ۱ ثانیه باز کن
           if (text.startsWith("http://") || text.startsWith("https://")) {
-            window.location.href = text;
-            return;
+            setTimeout(() => {
+              window.location.href = text;
+            }, 1000);
           }
 
-          document.getElementById("ticketTitle").value = text;
           return;
         }
 
