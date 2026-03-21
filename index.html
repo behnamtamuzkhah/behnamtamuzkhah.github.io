@@ -7,7 +7,6 @@
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
-
   <meta http-equiv="Permissions-Policy" content="camera=*" />
 
   <link rel="stylesheet" href="style.css" />
@@ -31,7 +30,6 @@
     <header class="app-header">
       <h1 id="titleText">مدیریت تیکت</h1>
 
-      <!-- انتخاب زبان -->
       <select id="langSelect" class="lang-switcher">
         <option value="fa">👑 فارسی</option>
         <option value="de">🇩🇪 Deutsch</option>
@@ -87,6 +85,8 @@
 
   <!-- ترجمه‌ها -->
   <script>
+    let currentLang = "fa";
+
     const translations = {
       fa: {
         title: "مدیریت تیکت",
@@ -100,7 +100,10 @@
         scanQR: "اسکن QR",
         stopScan: "توقف اسکن",
         tickets: "تیکت‌ها",
-        cameraHint: "دوربین را روی QR نگه دارید…"
+        cameraHint: "دوربین را روی QR نگه دارید…",
+        done: "انجام شد",
+        edit: "ویرایش",
+        delete: "حذف"
       },
       de: {
         title: "Ticketverwaltung",
@@ -114,7 +117,10 @@
         scanQR: "QR scannen",
         stopScan: "Scan stoppen",
         tickets: "Tickets",
-        cameraHint: "Halten Sie die Kamera auf den QR-Code…"
+        cameraHint: "Halten Sie die Kamera auf den QR-Code…",
+        done: "Erledigt",
+        edit: "Bearbeiten",
+        delete: "Löschen"
       },
       en: {
         title: "Ticket Manager",
@@ -128,7 +134,10 @@
         scanQR: "Scan QR",
         stopScan: "Stop Scan",
         tickets: "Tickets",
-        cameraHint: "Hold the camera over the QR…"
+        cameraHint: "Hold the camera over the QR…",
+        done: "Done",
+        edit: "Edit",
+        delete: "Delete"
       }
     };
 
@@ -151,10 +160,15 @@
 
       document.getElementById("ticketsHeader").textContent = t.tickets;
       document.getElementById("qrHint").textContent = t.cameraHint;
+
+      document.querySelectorAll(".ticket-btn.done").forEach(btn => btn.textContent = t.done);
+      document.querySelectorAll(".ticket-btn.edit").forEach(btn => btn.textContent = t.edit);
+      document.querySelectorAll(".ticket-btn.delete").forEach(btn => btn.textContent = t.delete);
     }
 
     document.getElementById("langSelect").addEventListener("change", (e) => {
-      applyLanguage(e.target.value);
+      currentLang = e.target.value;
+      applyLanguage(currentLang);
     });
 
     applyLanguage("fa");
