@@ -5,14 +5,16 @@
   <title>Ticket Manager</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
 
+  <!-- اجازهٔ دوربین برای Safari -->
   <meta http-equiv="Permissions-Policy" content="camera=*" />
 
   <link rel="stylesheet" href="style.css" />
 
-  <!-- jsQR -->
+  <!-- jsQR برای اسکن QR -->
   <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
 </head>
 
@@ -24,10 +26,12 @@
 
     <main class="app-main">
 
+      <!-- جستجو -->
       <section class="search-box">
         <input id="searchInput" type="text" placeholder="جستجو..." />
       </section>
 
+      <!-- مرتب‌سازی -->
       <section class="sort-box">
         <select id="sortSelect">
           <option value="newest">جدیدترین</option>
@@ -36,6 +40,7 @@
         </select>
       </section>
 
+      <!-- فرم تیکت -->
       <section class="ticket-form">
         <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
         <input id="ticketNote" type="text" placeholder="یادداشت" />
@@ -46,6 +51,7 @@
         </div>
       </section>
 
+      <!-- بخش QR -->
       <section id="qrSection" class="qr-section" style="display:none;">
         <video id="qrVideo" class="qr-video" muted playsinline autoplay></video>
         <canvas id="qrCanvas" style="display:none;"></canvas>
@@ -54,6 +60,7 @@
         <button id="stopQrBtn" class="secondary-btn" style="margin-top:8px;">توقف اسکن</button>
       </section>
 
+      <!-- لیست تیکت‌ها -->
       <section class="ticket-list-section">
         <h2>تیکت‌ها</h2>
         <ul id="ticketList" class="ticket-list"></ul>
@@ -62,12 +69,14 @@
     </main>
   </div>
 
+  <!-- Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
   </script>
 
+  <!-- منطق اسکن QR -->
   <script>
     let qrStream = null;
     let qrScanning = false;
@@ -87,7 +96,7 @@
       video.setAttribute("autoplay", "true");
       video.setAttribute("muted", "true");
 
-      // اگر قبلاً استریم داریم، دوباره استفاده کن
+      // اگر قبلاً استریم داریم، از همان استفاده می‌کنیم
       if (!qrStream) {
         try {
           qrStream = await navigator.mediaDevices.getUserMedia({
@@ -95,7 +104,7 @@
             audio: false
           });
         } catch (e) {
-          // اینجا هیچ پیامی نمی‌دهیم؛ فقط iOS دیالوگ خودش را نشان می‌دهد
+          // هیچ پیام اضافی؛ فقط دیالوگ iOS
           return;
         }
       }
@@ -105,11 +114,11 @@
 
       qrScanning = true;
 
-      async function scan() {
+      function scanLoop() {
         if (!qrScanning || !qrStream || !qrStream.active) return;
 
         if (video.videoWidth === 0 || video.videoHeight === 0) {
-          requestAnimationFrame(scan);
+          requestAnimationFrame(scanLoop);
           return;
         }
 
@@ -124,7 +133,7 @@
         if (code) {
           const text = code.data;
 
-          // اگر همان QR قبلی است، دوباره تریگر نکن
+          // از تریگر پشت‌سرهم روی همان QR جلوگیری می‌کنیم
           if (text !== lastScannedText) {
             lastScannedText = text;
 
@@ -132,22 +141,25 @@
             document.getElementById("ticketTitle").value = text;
 
             if (text.startsWith("http://") || text.startsWith("https://")) {
-              // تلاش برای باز کردن در Safari / تب جدید
-              const a = document.createElement("a");
-              a.href = text;
-              a.target = "_blank";
-              a.rel = "noopener";
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
+              // تلاش برای باز کردن در تب/لایهٔ جدا
+              let opened = null;
+              try {
+                opened = window.open(text, "_blank");
+              } catch (e) {
+                opened = null;
+              }
+              // اگر PWA اجازه نداد، همان صفحه را به لینک ببریم
+              if (!opened) {
+                window.location.href = text;
+              }
             }
           }
         }
 
-        requestAnimationFrame(scan);
+        requestAnimationFrame(scanLoop);
       }
 
-      scan();
+      scanLoop();
     }
 
     function stopQRScanner() {
@@ -155,9 +167,12 @@
       qrSection.style.display = "none";
       qrScanning = false;
       lastScannedText = null;
-      // استریم را نگه می‌داریم تا اگر دوباره خواستی سریع شروع شود
-      // اگر خواستی کاملاً خاموش شود، این را فعال کن:
-      // if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+
+      // این‌جا واقعاً دوربین را خاموش می‌کنیم
+      if (qrStream) {
+        qrStream.getTracks().forEach(t => t.stop());
+        qrStream = null;
+      }
     }
 
     document.getElementById("scanQrBtn").addEventListener("click", () => {
@@ -169,6 +184,7 @@
     });
   </script>
 
+  <!-- اسکریپت اصلی برنامه (تیکت‌ها، جستجو، مرتب‌سازی و...) -->
   <script src="script.js"></script>
 
 </body>
