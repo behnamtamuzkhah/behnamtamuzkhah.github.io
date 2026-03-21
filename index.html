@@ -71,7 +71,7 @@
     }
   </script>
 
-  <!-- QR Scanner (نسخهٔ جدید و سازگار با iOS) -->
+  <!-- QR Scanner نهایی -->
   <script>
     async function startQRScanner() {
       const video = document.getElementById("qrVideo");
@@ -81,12 +81,10 @@
       qrSection.style.display = "block";
       resultBox.textContent = "";
 
-      // iOS نیاز دارد این‌ها حتماً ست شوند
       video.setAttribute("playsinline", "true");
       video.setAttribute("autoplay", "true");
       video.setAttribute("muted", "true");
 
-      // گرفتن استریم دوربین
       let stream;
       try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -101,7 +99,6 @@
       video.srcObject = stream;
       await video.play();
 
-      // BarcodeDetector
       let detector = null;
       if ("BarcodeDetector" in window) {
         try {
@@ -111,7 +108,6 @@
         }
       }
 
-      // حلقهٔ اسکن
       async function scanLoop() {
         if (!stream.active) return;
 
@@ -122,10 +118,17 @@
 
             if (codes.length > 0) {
               const text = codes[0].rawValue;
+
               resultBox.textContent = "نتیجه: " + text;
 
-              // توقف دوربین
               stream.getTracks().forEach(t => t.stop());
+
+              if (text.startsWith("http://") || text.startsWith("https://")) {
+                window.location.href = text;
+                return;
+              }
+
+              document.getElementById("ticketTitle").value = text;
               return;
             }
           }
@@ -139,13 +142,12 @@
       scanLoop();
     }
 
-    // دکمهٔ شروع اسکن
     document.getElementById("scanQrBtn").addEventListener("click", () => {
       startQRScanner();
     });
   </script>
 
-  <!-- اسکریپت اصلی برنامه -->
+  <!-- اسکریپت اصلی -->
   <script src="script.js"></script>
 
 </body>
