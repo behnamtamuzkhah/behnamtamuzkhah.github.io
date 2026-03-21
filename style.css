@@ -340,3 +340,54 @@ body {
 .lang-switcher option {
   font-size: 13px;
 }
+/* ——— سوییچ حالت تاریک/روشن ——— */
+.theme-switcher {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #d1d1d6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  z-index: 999;
+  height: 26px;
+  line-height: 18px;
+}
+
+/* ——— حالت روشن ——— */
+:root {
+  --bg: #f2f2f7;
+  --text: #1c1c1e;
+  --card: #ffffff;
+  --border: #d1d1d6;
+}
+
+/* ——— حالت تاریک ——— */
+.dark-mode {
+  --bg: #000000;
+  --text: #f2f2f7;
+  --card: #1c1c1e;
+  --border: #3a3a3c;
+}
+
+/* ——— اعمال رنگ‌ها ——— */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.ticket-form,
+.ticket-item {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.search-box input,
+.sort-box select,
+.ticket-form input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
