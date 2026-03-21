@@ -51,6 +51,7 @@
         <canvas id="qrCanvas" style="display:none;"></canvas>
         <div class="qr-hint">دوربین را روی QR نگه دارید…</div>
         <div id="qrResult" class="qr-result"></div>
+        <button id="stopQrBtn" class="secondary-btn" style="margin-top:8px;">توقف اسکن</button>
       </section>
 
       <section class="ticket-list-section">
@@ -68,6 +69,10 @@
   </script>
 
   <script>
+    let qrStream = null;
+    let qrScanning = false;
+    let lastScannedText = null;
+
     async function startQRScanner() {
       const video = document.getElementById("qrVideo");
       const canvas = document.getElementById("qrCanvas");
@@ -82,21 +87,31 @@
       video.setAttribute("autoplay", "true");
       video.setAttribute("muted", "true");
 
-      let stream;
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "environment" } },
-          audio: false
-        });
-      } catch (e) {
-        return; // پیام خطا حذف شد
+      // اگر قبلاً استریم داریم، دوباره استفاده کن
+      if (!qrStream) {
+        try {
+          qrStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: "environment" } },
+            audio: false
+          });
+        } catch (e) {
+          // اینجا هیچ پیامی نمی‌دهیم؛ فقط iOS دیالوگ خودش را نشان می‌دهد
+          return;
+        }
       }
 
-      video.srcObject = stream;
+      video.srcObject = qrStream;
       await video.play();
 
-      function scan() {
-        if (!stream.active) return;
+      qrScanning = true;
+
+      async function scan() {
+        if (!qrScanning || !qrStream || !qrStream.active) return;
+
+        if (video.videoWidth === 0 || video.videoHeight === 0) {
+          requestAnimationFrame(scan);
+          return;
+        }
 
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -108,17 +123,16 @@
 
         if (code) {
           const text = code.data;
-          resultBox.textContent = "نتیجه: " + text;
 
-          // توقف دوربین
-          stream.getTracks().forEach(t => t.stop());
+          // اگر همان QR قبلی است، دوباره تریگر نکن
+          if (text !== lastScannedText) {
+            lastScannedText = text;
 
-          // ذخیره متن
-          document.getElementById("ticketTitle").value = text;
+            resultBox.textContent = "نتیجه: " + text;
+            document.getElementById("ticketTitle").value = text;
 
-          // اگر لینک بود → با ترفند iOS در Safari باز کن
-          if (text.startsWith("http://") || text.startsWith("https://")) {
-            setTimeout(() => {
+            if (text.startsWith("http://") || text.startsWith("https://")) {
+              // تلاش برای باز کردن در Safari / تب جدید
               const a = document.createElement("a");
               a.href = text;
               a.target = "_blank";
@@ -126,15 +140,8 @@
               document.body.appendChild(a);
               a.click();
               a.remove();
-            }, 800);
+            }
           }
-
-          // ریست برای اسکن دوباره
-          setTimeout(() => {
-            qrSection.style.display = "none";
-          }, 1200);
-
-          return;
         }
 
         requestAnimationFrame(scan);
@@ -143,8 +150,22 @@
       scan();
     }
 
+    function stopQRScanner() {
+      const qrSection = document.getElementById("qrSection");
+      qrSection.style.display = "none";
+      qrScanning = false;
+      lastScannedText = null;
+      // استریم را نگه می‌داریم تا اگر دوباره خواستی سریع شروع شود
+      // اگر خواستی کاملاً خاموش شود، این را فعال کن:
+      // if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+    }
+
     document.getElementById("scanQrBtn").addEventListener("click", () => {
       startQRScanner();
+    });
+
+    document.getElementById("stopQrBtn").addEventListener("click", () => {
+      stopQRScanner();
     });
   </script>
 
