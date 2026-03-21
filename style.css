@@ -278,3 +278,22 @@ body {
 .lang-switcher option {
   font-size: 10px;
 }
+/* ——— گلوبوس کمی بزرگ‌تر و خواناتر ——— */
+.lang-switcher {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 4px 8px;
+  font-size: 12px;   /* بزرگ‌تر شد */
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #d1d1d6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  z-index: 999;
+  height: 22px;      /* کمی بلندتر */
+  line-height: 14px;
+}
+
+.lang-switcher option {
+  font-size: 12px;
+}
