@@ -76,15 +76,57 @@ body {
   background: #fafafa;
 }
 
-.primary-btn {
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.primary-btn,
+.secondary-btn {
+  flex: 1;
   padding: 12px;
   border-radius: 12px;
   border: none;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.primary-btn {
   background: #ff7a1a;
   color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(255,122,26,0.3);
+}
+
+.secondary-btn {
+  background: #007aff;
+  color: #fff;
+}
+
+/* QR section */
+.qr-section {
+  display: none;
+  margin-bottom: 16px;
+  background: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+
+.qr-video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.qr-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 0;
+  left: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 13px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
 }
 
 /* List */
@@ -156,5 +198,10 @@ body {
 
 .ticket-btn.delete {
   background: #ff3b30;
+  color: #fff;
+}
+
+.ticket-btn.edit {
+  background: #5856d6;
   color: #fff;
 }
