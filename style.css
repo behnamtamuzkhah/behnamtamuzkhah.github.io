@@ -21,12 +21,26 @@ body {
 .app-header {
   text-align: center;
   margin-bottom: 20px;
+  position: relative;
 }
 
 .app-header h1 {
   font-size: 24px;
   font-weight: 700;
   color: #111;
+}
+
+/* ——— انتخاب زبان (گلوبوس) ——— */
+.lang-switcher {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 6px 10px;
+  font-size: 16px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #d1d1d6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* ——— جستجو ——— */
