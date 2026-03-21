@@ -1,78 +1,31 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="fa">
 <head>
-    <meta charset="UTF-8">
-    <title data-i18n="app_title">Ticket Manager</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#111111">
-    <link rel="manifest" href="manifest.webmanifest">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Ticket Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="app">
+  <div class="app">
+    <header class="app-header">
+      <h1>مدیریت تیکت</h1>
+    </header>
 
-    <!-- TOP BAR: THEME + LANGUAGE -->
-    <div class="top-bar">
-        <div class="theme-group">
-            <button class="theme-btn" data-theme="auto" data-i18n="theme_auto">Automatisch</button>
-            <button class="theme-btn" data-theme="light" data-i18n="theme_light">Hell</button>
-            <button class="theme-btn" data-theme="dark" data-i18n="theme_dark">Dunkel</button>
-        </div>
+    <main class="app-main">
+      <section class="ticket-form">
+        <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
+        <input id="ticketNote" type="text" placeholder="یادداشت" />
+        <button id="addTicketBtn" class="primary-btn">افزودن تیکت</button>
+      </section>
 
-        <div class="lang-group">
-            <span class="lang-icon">🌐</span>
-            <select id="langSelect">
-                <option value="de">DE</option>
-                <option value="en">EN</option>
-                <option value="fa">FA</option>
-            </select>
-        </div>
-    </div>
+      <section class="ticket-list-section">
+        <h2>تیکت‌ها</h2>
+        <ul id="ticketList" class="ticket-list"></ul>
+      </section>
+    </main>
+  </div>
 
-    <h1 data-i18n="app_title">Ticket Manager</h1>
-
-    <div class="card">
-        <label data-i18n="field_title_label">Ticket-Titel</label>
-        <input id="titleInput" placeholder="z.B. Konzert, Kino, Zug" data-i18n-placeholder="field_title_placeholder">
-
-        <label data-i18n="field_note_label">Notiz (optional)</label>
-        <textarea id="noteInput" rows="2" placeholder="Sitzplatz, Uhrzeit, Buchungscode ..." data-i18n-placeholder="field_note_placeholder"></textarea>
-
-        <button class="btn-primary" id="addBtn" data-i18n="add_button">Ticket hinzufügen</button>
-        <button class="btn-primary btn-scan" id="scanBtn" data-i18n="scan_button">
-            QR scannen
-        </button>
-
-        <video id="qrVideo" playsinline></video>
-    </div>
-
-    <div class="card">
-        <label data-i18n="search_label">Suche</label>
-        <input id="searchInput" placeholder="In Tickets suchen..." data-i18n-placeholder="search_placeholder">
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <span data-i18n="sort_label">Sortierung</span>
-            <div class="sort-group">
-                <button class="sort-btn" data-sort="newest" data-i18n="sort_newest">Neueste</button>
-                <button class="sort-btn" data-sort="oldest" data-i18n="sort_oldest">Älteste</button>
-            </div>
-        </div>
-
-        <div class="card-header">
-            <span data-i18n="tickets_title">Meine Tickets</span>
-            <small id="countLabel" class="count-label"></small>
-        </div>
-
-        <div id="ticketsContainer" class="tickets-list"></div>
-        <div id="emptyState" class="empty" data-i18n="empty_state">Keine Ergebnisse gefunden.</div>
-
-        <button class="btn-clear" id="clearAllBtn" data-i18n="delete_all_button">Alle Tickets löschen</button>
-    </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
