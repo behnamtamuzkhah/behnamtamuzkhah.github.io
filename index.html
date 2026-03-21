@@ -1,358 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Ticket Manager</title>
+    <title data-i18n="app_title">Ticket Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#111111">
     <link rel="manifest" href="manifest.webmanifest">
-
-    <style>
-        body {
-            margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #111;
-            color: #f5f5f5;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        /* LIGHT THEME */
-        body.light { background: #f5f5f5; color: #111; }
-        body.light .card { background: #fff; }
-        body.light input, body.light textarea {
-            background: #fff; color: #111; border: 1px solid #ccc;
-        }
-        body.light .ticket-item { background: #eee; }
-        body.light .ticket-note { color: #555; }
-        body.light .btn-primary { background: #00c853; color: #fff; }
-        body.light .btn-danger { background: #d32f2f; }
-        body.light .theme-btn { background: #ddd; color: #111; }
-        body.light .sort-btn { background: #ddd; color: #111; }
-
-        /* GENERAL UI */
-        .app { max-width: 480px; margin: 0 auto; padding: 16px; }
-        h1 { font-size: 24px; margin-bottom: 12px; }
-        .card {
-            background: #1b1b1b;
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-        }
-        label { font-size: 13px; color: #aaa; }
-        input, textarea {
-            width: 100%; margin-top: 4px; margin-bottom: 10px;
-            padding: 8px 10px; border-radius: 8px;
-            border: 1px solid #333; background: #111; color: #f5f5f5;
-            font-size: 14px;
-        }
-        button {
-            border: none; border-radius: 999px;
-            padding: 10px 16px; font-size: 14px;
-            font-weight: 600; cursor: pointer;
-        }
-        .btn-primary { background: #00c853; color: #000; }
-        .btn-danger { background: #ff5252; color: #fff; font-size: 12px; padding: 6px 10px; }
-
-        .tickets-list { margin-top: 8px; }
-        .ticket-item {
-            background: #181818; border-radius: 10px;
-            padding: 10px 12px; margin-bottom: 8px;
-            display: flex; justify-content: space-between;
-            gap: 8px; align-items: flex-start;
-        }
-        .ticket-main { font-size: 14px; }
-        .ticket-title { font-weight: 600; margin-bottom: 4px; }
-        .ticket-note { font-size: 12px; color: #ccc; }
-        .empty { font-size: 13px; color: #777; margin-top: 6px; }
-
-        /* THEME BUTTONS */
-        .theme-btn, .sort-btn {
-            border: none; padding: 6px 12px;
-            border-radius: 999px; font-size: 13px;
-            cursor: pointer; background: #333; color: #fff;
-        }
-        .theme-btn.active, .sort-btn.active {
-            border: 2px solid #00c853;
-        }
-
-        /* QR VIDEO */
-        #qrVideo {
-            width: 100%; border-radius: 12px;
-            margin-top: 10px; display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 <div class="app">
 
-    <!-- THEME SWITCHER -->
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <button class="theme-btn" data-theme="auto">خودکار</button>
-        <button class="theme-btn" data-theme="light">روشن</button>
-        <button class="theme-btn" data-theme="dark">تیره</button>
+    <!-- TOP BAR: THEME + LANGUAGE -->
+    <div class="top-bar">
+        <div class="theme-group">
+            <button class="theme-btn" data-theme="auto" data-i18n="theme_auto">Automatisch</button>
+            <button class="theme-btn" data-theme="light" data-i18n="theme_light">Hell</button>
+            <button class="theme-btn" data-theme="dark" data-i18n="theme_dark">Dunkel</button>
+        </div>
+
+        <div class="lang-group">
+            <span class="lang-icon">🌐</span>
+            <select id="langSelect">
+                <option value="de">DE</option>
+                <option value="en">EN</option>
+                <option value="fa">FA</option>
+            </select>
+        </div>
     </div>
 
-    <h1>مدیر بلیت</h1>
+    <h1 data-i18n="app_title">Ticket Manager</h1>
 
     <div class="card">
-        <label>عنوان بلیت</label>
-        <input id="titleInput" placeholder="مثلاً: کنسرت، سینما، قطار">
+        <label data-i18n="field_title_label">Ticket-Titel</label>
+        <input id="titleInput" placeholder="z.B. Konzert, Kino, Zug" data-i18n-placeholder="field_title_placeholder">
 
-        <label>یادداشت (اختیاری)</label>
-        <textarea id="noteInput" rows="2" placeholder="صندلی، ساعت، کد رزرو و ..."></textarea>
+        <label data-i18n="field_note_label">Notiz (optional)</label>
+        <textarea id="noteInput" rows="2" placeholder="Sitzplatz, Uhrzeit, Buchungscode ..." data-i18n-placeholder="field_note_placeholder"></textarea>
 
-        <button class="btn-primary" id="addBtn">افزودن بلیت</button>
-        <button class="btn-primary" id="scanBtn" style="margin-top:10px;background:#2979ff;color:#fff;">
-            اسکن QR
+        <button class="btn-primary" id="addBtn" data-i18n="add_button">Ticket hinzufügen</button>
+        <button class="btn-primary btn-scan" id="scanBtn" data-i18n="scan_button">
+            QR scannen
         </button>
 
         <video id="qrVideo" playsinline></video>
     </div>
 
     <div class="card">
-        <label>جستجو</label>
-        <input id="searchInput" placeholder="جستجو در بلیت‌ها...">
+        <label data-i18n="search_label">Suche</label>
+        <input id="searchInput" placeholder="In Tickets suchen..." data-i18n-placeholder="search_placeholder">
     </div>
 
     <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span>مرتب‌سازی</span>
-            <div style="display:flex;gap:8px;">
-                <button class="sort-btn" data-sort="newest">جدیدترین</button>
-                <button class="sort-btn" data-sort="oldest">قدیمی‌ترین</button>
+        <div class="card-header">
+            <span data-i18n="sort_label">Sortierung</span>
+            <div class="sort-group">
+                <button class="sort-btn" data-sort="newest" data-i18n="sort_newest">Neueste</button>
+                <button class="sort-btn" data-sort="oldest" data-i18n="sort_oldest">Älteste</button>
             </div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span>بلیت‌های من</span>
-            <small id="countLabel" style="color:#aaa;font-size:12px;"></small>
+        <div class="card-header">
+            <span data-i18n="tickets_title">Meine Tickets</span>
+            <small id="countLabel" class="count-label"></small>
         </div>
 
         <div id="ticketsContainer" class="tickets-list"></div>
-        <div id="emptyState" class="empty">هیچ نتیجه‌ای پیدا نشد.</div>
+        <div id="emptyState" class="empty" data-i18n="empty_state">Keine Ergebnisse gefunden.</div>
+
+        <button class="btn-clear" id="clearAllBtn" data-i18n="delete_all_button">Alle Tickets löschen</button>
     </div>
 </div>
 
-<script>
-    const STORAGE_KEY = "tickets-v1";
-    const SORT_KEY = "sort-mode";
-
-    const titleInput = document.getElementById("titleInput");
-    const noteInput = document.getElementById("noteInput");
-    const addBtn = document.getElementById("addBtn");
-    const scanBtn = document.getElementById("scanBtn");
-    const qrVideo = document.getElementById("qrVideo");
-    const ticketsContainer = document.getElementById("ticketsContainer");
-    const emptyState = document.getElementById("emptyState");
-    const countLabel = document.getElementById("countLabel");
-    const searchInput = document.getElementById("searchInput");
-
-    /* ---------------- THEME SYSTEM ---------------- */
-
-    function applyTheme(theme) {
-        const root = document.body;
-        root.classList.remove("light", "dark");
-
-        if (theme === "light") root.classList.add("light");
-        else if (theme === "dark") root.classList.add("dark");
-        else {
-            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-            root.classList.add(prefersDark ? "dark" : "light");
-        }
-
-        document.querySelectorAll(".theme-btn").forEach(btn => {
-            btn.classList.remove("active");
-            if (btn.dataset.theme === theme) btn.classList.add("active");
-        });
-    }
-
-    function loadTheme() {
-        const saved = localStorage.getItem("theme-choice") || "auto";
-        applyTheme(saved);
-    }
-
-    document.querySelectorAll(".theme-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const choice = btn.dataset.theme;
-            localStorage.setItem("theme-choice", choice);
-            applyTheme(choice);
-        });
-    });
-
-    loadTheme();
-
-    /* ---------------- SORT SYSTEM ---------------- */
-
-    function loadSortMode() {
-        return localStorage.getItem(SORT_KEY) || "newest";
-    }
-
-    function applySortButtons() {
-        const mode = loadSortMode();
-        document.querySelectorAll(".sort-btn").forEach(btn => {
-            btn.classList.remove("active");
-            if (btn.dataset.sort === mode) btn.classList.add("active");
-        });
-    }
-
-    document.querySelectorAll(".sort-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            localStorage.setItem(SORT_KEY, btn.dataset.sort);
-            applySortButtons();
-            renderTickets();
-        });
-    });
-
-    applySortButtons();
-
-    /* ---------------- TICKET SYSTEM ---------------- */
-
-    function loadTickets() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            return raw ? JSON.parse(raw) : [];
-        } catch (e) { return []; }
-    }
-
-    function saveTickets(tickets) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
-    }
-
-    function renderTickets() {
-        const tickets = loadTickets();
-        const query = searchInput.value.trim().toLowerCase();
-        const sortMode = loadSortMode();
-
-        let filtered = tickets.filter(t =>
-            t.title.toLowerCase().includes(query) ||
-            t.note.toLowerCase().includes(query)
-        );
-
-        if (sortMode === "newest") {
-            filtered.sort((a, b) => b.createdAt - a.createdAt);
-        } else {
-            filtered.sort((a, b) => a.createdAt - b.createdAt);
-        }
-
-        ticketsContainer.innerHTML = "";
-
-        if (filtered.length === 0) {
-            emptyState.style.display = "block";
-            countLabel.textContent = "";
-            return;
-        }
-
-        emptyState.style.display = "none";
-        countLabel.textContent = filtered.length + " بلیت";
-
-        filtered.forEach((t, index) => {
-            const item = document.createElement("div");
-            item.className = "ticket-item";
-
-            const main = document.createElement("div");
-            main.className = "ticket-main";
-
-            const titleEl = document.createElement("div");
-            titleEl.className = "ticket-title";
-            titleEl.textContent = t.title;
-            main.appendChild(titleEl);
-
-            if (t.note && t.note.trim() !== "") {
-                const noteEl = document.createElement("div");
-                noteEl.className = "ticket-note";
-                noteEl.textContent = t.note;
-                main.appendChild(noteEl);
-            }
-
-            const delBtn = document.createElement("button");
-            delBtn.className = "btn-danger";
-            delBtn.textContent = "حذف";
-            delBtn.onclick = () => {
-                const current = loadTickets();
-                const realIndex = current.findIndex(x => x.createdAt === t.createdAt);
-                current.splice(realIndex, 1);
-                saveTickets(current);
-                renderTickets();
-            };
-
-            item.appendChild(main);
-            item.appendChild(delBtn);
-            ticketsContainer.appendChild(item);
-        });
-    }
-
-    addBtn.addEventListener("click", () => {
-        const title = titleInput.value.trim();
-        const note = noteInput.value.trim();
-
-        if (!title) {
-            alert("عنوان بلیت را وارد کن.");
-            return;
-        }
-
-        const tickets = loadTickets();
-        tickets.push({ title, note, createdAt: Date.now() });
-        saveTickets(tickets);
-
-        titleInput.value = "";
-        noteInput.value = "";
-        renderTickets();
-    });
-
-    searchInput.addEventListener("input", renderTickets);
-
-    renderTickets();
-
-    /* ---------------- QR SCANNER ---------------- */
-
-    scanBtn.addEventListener("click", async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: "environment" }
-            });
-
-            qrVideo.srcObject = stream;
-            qrVideo.style.display = "block";
-            qrVideo.play();
-
-            const track = stream.getVideoTracks()[0];
-            const imageCapture = new ImageCapture(track);
-
-            const scanLoop = async () => {
-                try {
-                    const bitmap = await imageCapture.grabFrame();
-                    const detector = new BarcodeDetector({ formats: ["qr_code"] });
-                    const codes = await detector.detect(bitmap);
-
-                    if (codes.length > 0) {
-                        const text = codes[0].rawValue;
-
-                        titleInput.value = text.split("\n")[0] || "";
-                        noteInput.value = text.split("\n").slice(1).join("\n");
-
-                        stream.getTracks().forEach(t => t.stop());
-                        qrVideo.style.display = "none";
-                        return;
-                    }
-                } catch (e) {}
-
-                requestAnimationFrame(scanLoop);
-            };
-
-            scanLoop();
-
-        } catch (err) {
-            alert("دسترسی به دوربین امکان‌پذیر نیست.");
-        }
-    });
-
-    /* ---------------- SERVICE WORKER ---------------- */
-
-    if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("service-worker.js");
-    }
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
