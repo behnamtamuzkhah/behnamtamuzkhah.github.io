@@ -14,12 +14,10 @@
 
     <main class="app-main">
 
-      <!-- 🔍 جستجو -->
       <section class="search-box">
         <input id="searchInput" type="text" placeholder="جستجو..." />
       </section>
 
-      <!-- 🔽 مرتب‌سازی -->
       <section class="sort-box">
         <select id="sortSelect">
           <option value="newest">جدیدترین</option>
@@ -28,23 +26,22 @@
         </select>
       </section>
 
-      <!-- ➕ افزودن تیکت -->
       <section class="ticket-form">
         <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
         <input id="ticketNote" type="text" placeholder="یادداشت" />
+
         <div class="form-actions">
           <button id="addTicketBtn" class="primary-btn">افزودن تیکت</button>
           <button id="scanQrBtn" class="secondary-btn">اسکن QR</button>
         </div>
       </section>
 
-      <!-- 🎥 پیش‌نمایش اسکن -->
-      <section class="qr-section" id="qrSection">
+      <!-- QR Scanner -->
+      <section id="qrSection" class="qr-section">
         <video id="qrVideo" class="qr-video" muted playsinline></video>
-        <div class="qr-hint">دوربین را روی QR نگه دار…</div>
+        <div class="qr-hint">دوربین را روی QR نگه دارید…</div>
       </section>
 
-      <!-- 📋 لیست تیکت‌ها -->
       <section class="ticket-list-section">
         <h2>تیکت‌ها</h2>
         <ul id="ticketList" class="ticket-list"></ul>
