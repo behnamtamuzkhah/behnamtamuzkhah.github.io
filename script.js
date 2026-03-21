@@ -5,12 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const ticketList = document.getElementById("ticketList");
   const searchInput = document.getElementById("searchInput");
   const sortSelect = document.getElementById("sortSelect");
+
   const scanQrBtn = document.getElementById("scanQrBtn");
   const qrSection = document.getElementById("qrSection");
   const qrVideo = document.getElementById("qrVideo");
-
-  // مسیر worker چون در روت است
-  QrScanner.WORKER_PATH = 'qr-scanner-worker.min.js';
 
   let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
   let qrScanner = null;
@@ -47,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const li = document.createElement("li");
     li.className = "ticket-item";
     if (ticket.done) li.classList.add("done");
-    li.dataset.id = ticket.id;
 
     const header = document.createElement("div");
     header.className = "ticket-item-header";
@@ -89,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editBtn.addEventListener("click", () => {
       const newTitle = prompt("عنوان جدید:", ticket.title);
-      if (newTitle === null || newTitle.trim() === "") return;
+      if (!newTitle) return;
 
       const newNote = prompt("یادداشت جدید:", ticket.note);
       if (newNote === null) return;
@@ -102,17 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
       noteEl.textContent = ticket.note;
     });
 
-    actions.appendChild(doneBtn);
-    actions.appendChild(editBtn);
-    actions.appendChild(deleteBtn);
-
-    header.appendChild(titleEl);
-
-    li.appendChild(header);
-    li.appendChild(noteEl);
-    li.appendChild(actions);
-
-    ticketList.appendChild(li);
+    actions.append(doneBtn, editBtn, deleteBtn);
+    header.append(titleEl);
+    li.append(header, noteEl, actions);
+    ticketList.append(li);
   }
 
   // جستجو
@@ -141,39 +131,31 @@ document.addEventListener("DOMContentLoaded", () => {
     sorted.forEach(t => renderTicket(t));
   });
 
-  // QR Scanner
+  // QR Scanner کلاسیک
   scanQrBtn.addEventListener("click", async () => {
-    try {
-      if (!scanning) {
-        if (!qrScanner) {
-          qrScanner = new QrScanner(
-            qrVideo,
-            result => {
-              // متن QR را در یادداشت می‌گذاریم (یا اگر خواستی در عنوان)
-              noteInput.value = result;
-              stopScanning();
-            },
-            {
-              returnDetailedScanResult: false
-            }
-          );
-        }
+    if (!scanning) {
+      qrSection.style.display = "block";
+
+      qrScanner = new QRScanner(qrVideo, result => {
+        noteInput.value = result;
+        stopScan();
+      });
+
+      try {
         await qrScanner.start();
-        qrSection.style.display = "block";
         scanning = true;
         scanQrBtn.textContent = "توقف اسکن";
-      } else {
-        stopScanning();
+      } catch (err) {
+        alert("دسترسی به دوربین ممکن نیست.");
+        stopScan();
       }
-    } catch (e) {
-      alert("دسترسی به دوربین ممکن نیست.");
+    } else {
+      stopScan();
     }
   });
 
-  function stopScanning() {
-    if (qrScanner) {
-      qrScanner.stop();
-    }
+  function stopScan() {
+    if (qrScanner) qrScanner.stop();
     qrSection.style.display = "none";
     scanning = false;
     scanQrBtn.textContent = "اسکن QR";
