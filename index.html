@@ -67,7 +67,6 @@
     }
   </script>
 
-  <!-- نسخهٔ Ultra-Fallback با رفتار جدید -->
   <script>
     async function startQRScanner() {
       const video = document.getElementById("qrVideo");
@@ -90,7 +89,7 @@
           audio: false
         });
       } catch (e) {
-        alert("دسترسی به دوربین ممکن نیست.");
+        // پیام اشتباه حذف شد
         return;
       }
 
@@ -115,15 +114,20 @@
           // توقف دوربین
           stream.getTracks().forEach(t => t.stop());
 
-          // همیشه متن را ذخیره کن
+          // ذخیره متن
           document.getElementById("ticketTitle").value = text;
 
-          // اگر لینک بود → بعد از ۱ ثانیه باز کن
+          // اگر لینک بود → در Safari باز کن
           if (text.startsWith("http://") || text.startsWith("https://")) {
             setTimeout(() => {
-              window.location.href = text;
-            }, 1000);
+              window.open(text, "_blank");
+            }, 800);
           }
+
+          // ریست برای اسکن دوباره
+          setTimeout(() => {
+            qrSection.style.display = "none";
+          }, 1200);
 
           return;
         }
