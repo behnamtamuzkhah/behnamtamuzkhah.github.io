@@ -1,3 +1,4 @@
+/* ——— پایه ——— */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -28,7 +29,7 @@ body {
   color: #111;
 }
 
-/* Search */
+/* ——— جستجو ——— */
 .search-box {
   margin-bottom: 16px;
 }
@@ -42,7 +43,7 @@ body {
   font-size: 15px;
 }
 
-/* Sort */
+/* ——— مرتب‌سازی ——— */
 .sort-box {
   margin-bottom: 16px;
 }
@@ -56,7 +57,7 @@ body {
   font-size: 15px;
 }
 
-/* Form */
+/* ——— فرم ——— */
 .ticket-form {
   background: #fff;
   padding: 16px;
@@ -102,7 +103,7 @@ body {
   color: #fff;
 }
 
-/* QR section */
+/* ——— QR ——— */
 .qr-section {
   display: none;
   margin-bottom: 16px;
@@ -119,4 +120,85 @@ body {
 
 .qr-hint {
   position: absolute;
-  bottom
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 13px;
+}
+
+/* ——— لیست ——— */
+.ticket-list-section h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.ticket-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-item {
+  background: #fff;
+  padding: 14px;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ticket-item.done {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+.ticket-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticket-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #111;
+}
+
+.ticket-note {
+  font-size: 14px;
+  color: #555;
+}
+
+.ticket-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.ticket-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ticket-btn.done {
+  background: #34c759;
+  color: #fff;
+}
+
+.ticket-btn.delete {
+  background: #ff3b30;
+  color: #fff;
+}
+
+.ticket-btn.edit {
+  background: #5856d6;
+  color: #fff;
+}
