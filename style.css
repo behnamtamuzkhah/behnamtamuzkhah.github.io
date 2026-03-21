@@ -139,6 +139,19 @@ body {
   font-weight: 600;
   transition: transform 0.1s, opacity 0.2s;
 }
+/* --- Search Box --- */
+.search-box {
+  margin-bottom: 16px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d1d6;
+  background: #fafafa;
+  font-size: 15px;
+}
 
 .ticket-btn:active {
   transform: scale(0.96);
