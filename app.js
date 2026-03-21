@@ -45,18 +45,27 @@ addBtn.onclick = () => {
     render();
 };
 
-/* -------- QR SCANNER -------- */
+/* -------- QR SCANNER (نسخه نهایی پایدار) -------- */
 
 let stream = null;
 
 scanBtn.onclick = async () => {
     try {
         stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }
+            video: {
+                facingMode: "environment",
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
         });
 
         qrVideo.srcObject = stream;
         qrVideo.style.display = "block";
+
+        await new Promise(res => {
+            qrVideo.onloadedmetadata = res;
+        });
+
         await qrVideo.play();
 
         const canvas = document.createElement("canvas");
@@ -65,23 +74,32 @@ scanBtn.onclick = async () => {
         const scan = () => {
             if (!stream) return;
 
-            canvas.width = qrVideo.videoWidth;
-            canvas.height = qrVideo.videoHeight;
+            // 🔥 مهم: کوچک کردن تصویر برای iPhone
+            const targetWidth = 400;
+            const scale = targetWidth / qrVideo.videoWidth;
+            const targetHeight = qrVideo.videoHeight * scale;
 
-            ctx.drawImage(qrVideo, 0, 0);
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
 
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, canvas.width, canvas.height);
+            ctx.drawImage(qrVideo, 0, 0, targetWidth, targetHeight);
 
-            if (code) {
-                noteInput.value = code.data;
+            try {
+                const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+                const code = jsQR(imageData.data, targetWidth, targetHeight);
 
-                stream.getTracks().forEach(t => t.stop());
-                qrVideo.style.display = "none";
-                stream = null;
+                if (code && code.data) {
+                    noteInput.value = code.data;
 
-                alert("QR OK ✅");
-                return;
+                    stream.getTracks().forEach(t => t.stop());
+                    qrVideo.style.display = "none";
+                    stream = null;
+
+                    alert("QR erkannt ✅");
+                    return;
+                }
+            } catch (e) {
+                // ignore
             }
 
             requestAnimationFrame(scan);
@@ -90,6 +108,7 @@ scanBtn.onclick = async () => {
         scan();
 
     } catch (e) {
-        alert("❌ Kamera funktioniert nicht\n\n👉 از GitHub Pages باز کن");
+        alert("❌ Kamera funktioniert nicht\n\n👉 از GitHub Pages (https) باز کن");
+        console.error(e);
     }
 };
