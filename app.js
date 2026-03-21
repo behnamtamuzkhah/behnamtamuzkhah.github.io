@@ -405,3 +405,30 @@ scanBtn.addEventListener("click", async () => {
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
 }
+const video = document.getElementById('qrVideo');
+const scanBtn = document.getElementById('scanBtn');
+const noteInput = document.getElementById('noteInput');
+
+let scanner = null;
+
+scanBtn.addEventListener('click', async () => {
+    if (!scanner) {
+        scanner = new QRScanner(video, (result) => {
+            if (result) {
+                noteInput.value = result;
+                scanner.stop();
+                video.style.display = "none";
+                alert("QR gelesen ✅");
+            }
+        });
+    }
+
+    video.style.display = "block";
+
+    try {
+        await scanner.start();
+    } catch (e) {
+        alert("Kamera Fehler ❌");
+        console.error(e);
+    }
+});
