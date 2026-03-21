@@ -14,6 +14,7 @@
 
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="app">
     <header class="app-header">
@@ -22,10 +23,12 @@
 
     <main class="app-main">
 
+      <!-- جستجو -->
       <section class="search-box">
         <input id="searchInput" type="text" placeholder="جستجو..." />
       </section>
 
+      <!-- مرتب‌سازی -->
       <section class="sort-box">
         <select id="sortSelect">
           <option value="newest">جدیدترین</option>
@@ -34,6 +37,7 @@
         </select>
       </section>
 
+      <!-- فرم تیکت -->
       <section class="ticket-form">
         <input id="ticketTitle" type="text" placeholder="عنوان تیکت" />
         <input id="ticketNote" type="text" placeholder="یادداشت" />
@@ -44,11 +48,14 @@
         </div>
       </section>
 
-      <section id="qrSection" class="qr-section">
+      <!-- بخش QR -->
+      <section id="qrSection" class="qr-section" style="display:none;">
         <video id="qrVideo" class="qr-video" muted playsinline autoplay></video>
         <div class="qr-hint">دوربین را روی QR نگه دارید…</div>
+        <div id="qrResult" class="qr-result"></div>
       </section>
 
+      <!-- لیست تیکت‌ها -->
       <section class="ticket-list-section">
         <h2>تیکت‌ها</h2>
         <ul id="ticketList" class="ticket-list"></ul>
@@ -57,13 +64,89 @@
     </main>
   </div>
 
+  <!-- Service Worker -->
   <script>
-    // ثبت Service Worker
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
   </script>
 
+  <!-- QR Scanner (نسخهٔ جدید و سازگار با iOS) -->
+  <script>
+    async function startQRScanner() {
+      const video = document.getElementById("qrVideo");
+      const resultBox = document.getElementById("qrResult");
+      const qrSection = document.getElementById("qrSection");
+
+      qrSection.style.display = "block";
+      resultBox.textContent = "";
+
+      // iOS نیاز دارد این‌ها حتماً ست شوند
+      video.setAttribute("playsinline", "true");
+      video.setAttribute("autoplay", "true");
+      video.setAttribute("muted", "true");
+
+      // گرفتن استریم دوربین
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } },
+          audio: false
+        });
+      } catch (e) {
+        alert("دسترسی به دوربین ممکن نیست.");
+        return;
+      }
+
+      video.srcObject = stream;
+      await video.play();
+
+      // BarcodeDetector
+      let detector = null;
+      if ("BarcodeDetector" in window) {
+        try {
+          detector = new BarcodeDetector({ formats: ["qr_code"] });
+        } catch (e) {
+          detector = null;
+        }
+      }
+
+      // حلقهٔ اسکن
+      async function scanLoop() {
+        if (!stream.active) return;
+
+        try {
+          if (detector) {
+            const bitmap = await createImageBitmap(video);
+            const codes = await detector.detect(bitmap);
+
+            if (codes.length > 0) {
+              const text = codes[0].rawValue;
+              resultBox.textContent = "نتیجه: " + text;
+
+              // توقف دوربین
+              stream.getTracks().forEach(t => t.stop());
+              return;
+            }
+          }
+        } catch (err) {
+          console.log("Scan error:", err);
+        }
+
+        requestAnimationFrame(scanLoop);
+      }
+
+      scanLoop();
+    }
+
+    // دکمهٔ شروع اسکن
+    document.getElementById("scanQrBtn").addEventListener("click", () => {
+      startQRScanner();
+    });
+  </script>
+
+  <!-- اسکریپت اصلی برنامه -->
   <script src="script.js"></script>
+
 </body>
 </html>
