@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <title>Ticket Manager</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- اجازهٔ دوربین برای Safari -->
+  <meta http-equiv="Permissions-Policy" content="camera=*" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -36,9 +44,8 @@
         </div>
       </section>
 
-      <!-- QR Scanner -->
       <section id="qrSection" class="qr-section">
-        <video id="qrVideo" class="qr-video" muted playsinline></video>
+        <video id="qrVideo" class="qr-video" muted playsinline autoplay></video>
         <div class="qr-hint">دوربین را روی QR نگه دارید…</div>
       </section>
 
@@ -49,6 +56,13 @@
 
     </main>
   </div>
+
+  <script>
+    // ثبت Service Worker
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
 
   <script src="script.js"></script>
 </body>
