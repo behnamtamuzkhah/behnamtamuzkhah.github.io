@@ -27,6 +27,7 @@
         body.light .btn-primary { background: #00c853; color: #fff; }
         body.light .btn-danger { background: #d32f2f; }
         body.light .theme-btn { background: #ddd; color: #111; }
+        body.light .sort-btn { background: #ddd; color: #111; }
 
         /* GENERAL UI */
         .app { max-width: 480px; margin: 0 auto; padding: 16px; }
@@ -65,12 +66,14 @@
         .empty { font-size: 13px; color: #777; margin-top: 6px; }
 
         /* THEME BUTTONS */
-        .theme-btn {
+        .theme-btn, .sort-btn {
             border: none; padding: 6px 12px;
             border-radius: 999px; font-size: 13px;
             cursor: pointer; background: #333; color: #fff;
         }
-        .theme-btn.active { border: 2px solid #00c853; }
+        .theme-btn.active, .sort-btn.active {
+            border: 2px solid #00c853;
+        }
 
         /* QR VIDEO */
         #qrVideo {
@@ -113,10 +116,19 @@
     </div>
 
     <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span>مرتب‌سازی</span>
+            <div style="display:flex;gap:8px;">
+                <button class="sort-btn" data-sort="newest">جدیدترین</button>
+                <button class="sort-btn" data-sort="oldest">قدیمی‌ترین</button>
+            </div>
+        </div>
+
         <div style="display:flex;justify-content:space-between;align-items:center;">
             <span>بلیت‌های من</span>
             <small id="countLabel" style="color:#aaa;font-size:12px;"></small>
         </div>
+
         <div id="ticketsContainer" class="tickets-list"></div>
         <div id="emptyState" class="empty">هیچ نتیجه‌ای پیدا نشد.</div>
     </div>
@@ -124,6 +136,7 @@
 
 <script>
     const STORAGE_KEY = "tickets-v1";
+    const SORT_KEY = "sort-mode";
 
     const titleInput = document.getElementById("titleInput");
     const noteInput = document.getElementById("noteInput");
@@ -169,6 +182,30 @@
 
     loadTheme();
 
+    /* ---------------- SORT SYSTEM ---------------- */
+
+    function loadSortMode() {
+        return localStorage.getItem(SORT_KEY) || "newest";
+    }
+
+    function applySortButtons() {
+        const mode = loadSortMode();
+        document.querySelectorAll(".sort-btn").forEach(btn => {
+            btn.classList.remove("active");
+            if (btn.dataset.sort === mode) btn.classList.add("active");
+        });
+    }
+
+    document.querySelectorAll(".sort-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            localStorage.setItem(SORT_KEY, btn.dataset.sort);
+            applySortButtons();
+            renderTickets();
+        });
+    });
+
+    applySortButtons();
+
     /* ---------------- TICKET SYSTEM ---------------- */
 
     function loadTickets() {
@@ -185,11 +222,18 @@
     function renderTickets() {
         const tickets = loadTickets();
         const query = searchInput.value.trim().toLowerCase();
+        const sortMode = loadSortMode();
 
-        const filtered = tickets.filter(t =>
+        let filtered = tickets.filter(t =>
             t.title.toLowerCase().includes(query) ||
             t.note.toLowerCase().includes(query)
         );
+
+        if (sortMode === "newest") {
+            filtered.sort((a, b) => b.createdAt - a.createdAt);
+        } else {
+            filtered.sort((a, b) => a.createdAt - b.createdAt);
+        }
 
         ticketsContainer.innerHTML = "";
 
