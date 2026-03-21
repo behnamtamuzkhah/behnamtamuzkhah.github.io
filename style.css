@@ -297,3 +297,46 @@ body {
 .lang-switcher option {
   font-size: 12px;
 }
+/* ——— اصلاح نهایی منوی زبان (ارتفاع کامل + گلوبوس واضح) ——— */
+
+.lang-switcher {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+
+  /* اندازه مناسب */
+  padding: 4px 8px;
+
+  /* این دو خط مشکل ارتفاع را 100٪ حل می‌کنند */
+  height: 26px;
+  line-height: 18px;
+
+  font-size: 13px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #d1d1d6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  z-index: 999;
+}
+
+.lang-switcher option {
+  font-size: 13px;
+}
+.lang-switcher {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 4px 8px;
+  height: 26px;
+  line-height: 18px;
+  font-size: 13px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #d1d1d6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  z-index: 999;
+}
+
+.lang-switcher option {
+  font-size: 13px;
+}
