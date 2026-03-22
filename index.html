@@ -1,171 +1,142 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Tickets</title>
-  
-  <!-- iOS PWA - این خطوط مهم هستند -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Tickets" />
-  
-  <!-- Apple Touch Icon - مسیر کامل -->
-  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-  
-  <!-- Manifest -->
-  <link rel="manifest" href="./manifest.webmanifest" />
-  
-  <!-- Theme -->
-  <meta name="theme-color" content="#1a365d" />
-  
-  <!-- سایر کدها -->
-</head>
-  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Ticket Manager</title>
+  <title>Tickets</title>
   
-  <!-- iOS PWA Meta Tags -->
+  <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Tickets" />
   
-  <!-- Apple Touch Icon - مهم‌ترین تگ برای آیفون -->
+  <!-- Apple Touch Icon -->
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon.png" />
-  <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon.png" />
   
-  <!-- Manifest for Android/Chrome -->
+  <!-- Manifest & Theme -->
   <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#000000" />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="icon-192.png" />
-  
-  <!-- Theme Color -->
-  <meta name="theme-color" content="#1a365d" />
-  
-  <!-- Splash Screen for iOS -->
-  <link rel="apple-touch-startup-image" href="splash.png" />
-  
-  <!-- بقیه استایل‌ها -->
-</head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ticket Manager</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 
-<style>
-  body {
-    margin: 0;
-    background: #000;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-  }
+  <style>
+    html, body {
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+    }
 
-  header {
-    padding: 12px 16px;
-    background: #111;
-    border-bottom: 1px solid #222;
-    font-size: 20px;
-    font-weight: 600;
-  }
+    header {
+      padding: 12px 16px;
+      background: #111;
+      border-bottom: 1px solid #222;
+      font-size: 20px;
+      font-weight: 600;
+    }
 
-  .container {
-    padding: 12px;
-  }
+    .container {
+      padding: 12px;
+    }
 
-  input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #1c1c1e;
-    color: #fff;
-    font-size: 16px;
-  }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #1c1c1e;
+      color: #fff;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
 
-  button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 10px;
-    background: #0a84ff;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-  }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #0a84ff;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+    }
 
-  ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-  }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
 
-  .ticket-item {
-    background: #1c1c1e;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #333;
-    margin-bottom: 12px;
-    display: flex;
-    flex-direction: column;
-  }
+    .ticket-item {
+      background: #1c1c1e;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+    }
 
-  .ticket-item.done {
-    opacity: 0.5;
-    text-decoration: line-through;
-  }
+    .ticket-item.done {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
 
-  .ticket-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-  }
+    .ticket-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-  .ticket-btn {
-    flex: 1;
-    padding: 8px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-  }
+    .ticket-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+    }
 
-  .done { background: #30d158; }
-  .edit { background: #ffd60a; }
-  .delete { background: #ff453a; }
+    .ticket-btn.done { background: #30d158; }
+    .ticket-btn.edit { background: #ffd60a; color: #000; }
+    .ticket-btn.delete { background: #ff453a; }
 
-  /* QR Scanner */
-  #qrSection {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 999;
-  }
+    #qrSection {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 999;
+    }
 
-  #qrVideo {
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-  }
+    #qrVideo {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
 
-  .qr-frame {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 260px;
-    height: 260px;
-    border: 2px solid #00ff99;
-    border-radius: 16px;
-    transform: translate(-50%, -50%);
-  }
-</style>
+    .qr-frame {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 260px;
+      height: 260px;
+      border: 2px solid #00ff99;
+      border-radius: 16px;
+      transform: translate(-50%, -50%);
+    }
+  </style>
 </head>
 
 <body>
@@ -173,7 +144,6 @@
 <header>مدیریت تیکت</header>
 
 <div class="container">
-
   <input id="ticketTitle" placeholder="عنوان تیکت">
   <textarea id="ticketNote" placeholder="یادداشت"></textarea>
   <button id="addTicketBtn">افزودن تیکت</button>
@@ -191,194 +161,13 @@
   <ul id="ticketList"></ul>
 </div>
 
-<!-- QR Scanner -->
 <div id="qrSection">
   <video id="qrVideo" autoplay playsinline></video>
   <div class="qr-frame"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
-<script>
-// جلوگیری از اسکرول ناخواسته iPhone
-document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
-
-document.addEventListener("DOMContentLoaded", () => {
-  const titleInput = document.getElementById("ticketTitle");
-  const noteInput = document.getElementById("ticketNote");
-  const addBtn = document.getElementById("addTicketBtn");
-  const ticketList = document.getElementById("ticketList");
-  const searchInput = document.getElementById("searchInput");
-  const sortSelect = document.getElementById("sortSelect");
-
-  const scanQrBtn = document.getElementById("scanQrBtn");
-  const qrSection = document.getElementById("qrSection");
-  const qrVideo = document.getElementById("qrVideo");
-
-  let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
-  let scanning = false;
-  let stream = null;
-
-  tickets.forEach(t => renderTicket(t));
-
-  function saveTickets() {
-    localStorage.setItem("tickets", JSON.stringify(tickets));
-  }
-
-  addBtn.addEventListener("click", () => {
-    const title = titleInput.value.trim();
-    const note = noteInput.value.trim();
-    if (!title) return alert("عنوان لازم است");
-
-    const ticket = { id: Date.now(), title, note, done: false };
-    tickets.push(ticket);
-    saveTickets();
-    renderTicket(ticket);
-
-    titleInput.value = "";
-    noteInput.value = "";
-  });
-
-  function renderTicket(ticket) {
-    const li = document.createElement("li");
-    li.className = "ticket-item";
-    if (ticket.done) li.classList.add("done");
-
-    li.innerHTML = `
-      <div class="ticket-title">${ticket.title}</div>
-      <div class="ticket-note">${ticket.note}</div>
-      <div class="ticket-actions">
-        <button class="ticket-btn done">انجام شد</button>
-        <button class="ticket-btn edit">ویرایش</button>
-        <button class="ticket-btn delete">حذف</button>
-      </div>
-    `;
-
-    li.querySelector(".done").onclick = () => {
-      ticket.done = !ticket.done;
-      saveTickets();
-      li.classList.toggle("done");
-    };
-
-    li.querySelector(".delete").onclick = () => {
-      tickets = tickets.filter(t => t.id !== ticket.id);
-      saveTickets();
-      li.remove();
-    };
-
-    li.querySelector(".edit").onclick = () => {
-      const newTitle = prompt("عنوان جدید:", ticket.title);
-      if (!newTitle) return;
-      const newNote = prompt("یادداشت جدید:", ticket.note);
-      if (newNote === null) return;
-
-      ticket.title = newTitle.trim();
-      ticket.note = newNote.trim();
-      saveTickets();
-
-      li.querySelector(".ticket-title").textContent = ticket.title;
-      li.querySelector(".ticket-note").textContent = ticket.note;
-    };
-
-    ticketList.append(li);
-  }
-
-  // جستجو
-  searchInput.addEventListener("input", () => {
-    const q = searchInput.value.trim().toLowerCase();
-    document.querySelectorAll(".ticket-item").forEach(item => {
-      const title = item.querySelector(".ticket-title").textContent.toLowerCase();
-      const note = item.querySelector(".ticket-note").textContent.toLowerCase();
-      item.style.display = (title.includes(q) || note.includes(q)) ? "flex" : "none";
-    });
-  });
-
-  // مرتب‌سازی
-  sortSelect.addEventListener("change", () => {
-    const mode = sortSelect.value;
-    let sorted = [...tickets];
-
-    if (mode === "newest") sorted.sort((a, b) => b.id - a.id);
-    else if (mode === "oldest") sorted.sort((a, b) => a.id - b.id);
-    else if (mode === "undone") sorted.sort((a, b) => Number(a.done) - Number(b.done));
-
-    ticketList.innerHTML = "";
-    sorted.forEach(t => renderTicket(t));
-  });
-
-  // -------------------------------
-  // QR Scanner — jsQR (نسخه ۱۰۰٪ سازگار با iPhone)
-  // -------------------------------
-  scanQrBtn.addEventListener("click", async () => {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" }
-      });
-
-      qrVideo.srcObject = stream;
-      await qrVideo.play();
-
-      qrSection.style.display = "block";
-      scanning = true;
-      scanQrBtn.textContent = "توقف اسکن";
-
-      scanLoop();
-    } catch (err) {
-      alert("دسترسی به دوربین ممکن نیست.");
-    }
-  });
-
-  function stopScan() {
-    scanning = false;
-    scanQrBtn.textContent = "اسکن QR";
-    qrSection.style.display = "none";
-
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      stream = null;
-    }
-  }
-
-  function scanLoop() {
-    if (!scanning) return;
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = qrVideo.videoWidth;
-    canvas.height = qrVideo.videoHeight;
-
-    ctx.drawImage(qrVideo, 0, 0, canvas.width, canvas.height);
-
-    const size = Math.min(canvas.width, canvas.height) * 0.6;
-    const sx = (canvas.width - size) / 2;
-    const sy = (canvas.height - size) / 2;
-
-    const imgData = ctx.getImageData(sx, sy, size, size);
-    const code = jsQR(imgData.data, size, size);
-
-    if (code && code.data) {
-      stopScan();
-
-      const ticket = {
-        id: Date.now(),
-        title: code.data,
-        note: "",
-        done: false
-      };
-
-      tickets.push(ticket);
-      saveTickets();
-      renderTicket(ticket);
-
-      alert("QR ثبت شد:\n" + code.data);
-      return;
-    }
-
-    requestAnimationFrame(scanLoop);
-  }
-});
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
