@@ -50,6 +50,10 @@
         outline: none;
     }
 
+    .lang-box select option {
+        color: #000;
+    }
+
     /* SEARCH */
     .search-container {
         padding: 10px;
@@ -90,6 +94,10 @@
     }
 
     /* TICKETS */
+    #ticketList {
+        padding-bottom: 20px;
+    }
+
     .ticket {
         background: #1c1c1e;
         margin: 10px;
@@ -106,6 +114,22 @@
         font-size: 13px;
         margin-bottom: 6px;
         color: #a1a1a6;
+    }
+
+    .ticket-text {
+        font-size: 16px;
+        line-height: 1.4;
+        color: #f5f5f7;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        border-radius: 8px;
+        padding: 4px 8px;
+        font-size: 13px;
+        border: none;
+        margin-left: 4px;
+        color: #fff;
     }
 
     .edit-btn { background: #ff9f0a; }
@@ -166,6 +190,15 @@
         font-size: 16px;
         z-index: 20;
     }
+
+    .hint {
+        position: absolute;
+        bottom: 40px;
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        color: #d1d1d6;
+    }
 </style>
 </head>
 
@@ -205,6 +238,7 @@
     <div class="frame">
         <div class="laser"></div>
     </div>
+    <div class="hint">Align the QR code inside the frame</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
@@ -232,7 +266,6 @@ function applyLanguage(lang) {
 
 const langSelect = document.getElementById("langSelect");
 langSelect.addEventListener("change", e => applyLanguage(e.target.value));
-
 const savedLang = localStorage.getItem("lang") || "en";
 langSelect.value = savedLang;
 applyLanguage(savedLang);
@@ -247,7 +280,6 @@ function saveTickets() {
 function renderTickets() {
     const list = document.getElementById("ticketList");
     list.innerHTML = "";
-
     const search = document.getElementById("searchInput").value.toLowerCase();
 
     tickets
@@ -255,7 +287,6 @@ function renderTickets() {
         .forEach((t, index) => {
             const div = document.createElement("div");
             div.className = "ticket";
-
             div.innerHTML = `
                 <div class="ticket-header">
                     <span>${new Date(t.date).toLocaleString()}</span>
@@ -266,14 +297,11 @@ function renderTickets() {
                 </div>
                 <div class="ticket-text">${t.text}</div>
             `;
-
             list.appendChild(div);
         });
 }
-
 renderTickets();
 
-/* ------------------ EDIT & DELETE ------------------ */
 function deleteTicket(i) {
     tickets.splice(i, 1);
     saveTickets();
@@ -289,21 +317,27 @@ function editTicket(i) {
     }
 }
 
-/* ------------------ SORT ------------------ */
 document.getElementById("sortBtn").addEventListener("click", () => {
     tickets.sort((a, b) => new Date(b.date) - new Date(a.date));
     saveTickets();
     renderTickets();
 });
 
+document.getElementById("searchInput").addEventListener("input", renderTickets);
+
 /* ------------------ QR SCANNER ------------------ */
 const scannerPage = document.getElementById("scannerPage");
 const video = document.getElementById("camera");
-
 document.getElementById("openScanner").onclick = openScanner;
 
 async function openScanner() {
     scannerPage.style.display = "flex";
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera API not available (need https and a real device).");
+        closeScanner();
+        return;
+    }
 
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -312,7 +346,7 @@ async function openScanner() {
         video.srcObject = stream;
         scanLoop();
     } catch (err) {
-        alert("Camera access denied.");
+        alert("Camera access denied or failed.");
         closeScanner();
     }
 }
@@ -324,7 +358,9 @@ function closeScanner() {
 
 function stopCamera() {
     const stream = video.srcObject;
-    if (stream) stream.getTracks().forEach(t => t.stop());
+    if (stream && stream.getTracks) {
+        stream.getTracks().forEach(t => t.stop());
+    }
 }
 
 function scanLoop() {
@@ -353,10 +389,8 @@ function scanLoop() {
 
     tick();
 }
-
-/* ------------------ SEARCH ------------------ */
-document.getElementById("searchInput").addEventListener("input", renderTickets);
 </script>
 
 </body>
 </html>
+
