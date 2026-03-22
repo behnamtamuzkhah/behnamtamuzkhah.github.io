@@ -1,241 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ticket Manager</title>
 
 <style>
-    :root { color-scheme: dark; }
-    body { margin: 0; background: #000; color: #fff; font-family: -apple-system; }
+  body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+  }
 
-    header {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 12px 16px; background: #111; border-bottom: 1px solid #222;
-        position: sticky; top: 0; z-index: 20;
-    }
+  header {
+    padding: 12px 16px;
+    background: #111;
+    border-bottom: 1px solid #222;
+    font-size: 20px;
+    font-weight: 600;
+  }
 
-    .title { font-size: 20px; font-weight: 600; }
+  .container {
+    padding: 12px;
+  }
 
-    .lang-box {
-        display: flex; align-items: center; gap: 6px;
-        background: #1c1c1e; padding: 4px 8px; border-radius: 8px;
-    }
+  input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #1c1c1e;
+    color: #fff;
+    font-size: 16px;
+  }
 
-    .lang-box select {
-        border: none; background: transparent; color: #fff; font-size: 14px; outline: none;
-    }
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #0a84ff;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+  }
 
-    .search-container { padding: 10px; border-bottom: 1px solid #222; }
-    .search-container input {
-        width: 100%; padding: 12px; border-radius: 10px;
-        border: 1px solid #333; background: #1c1c1e; color: #fff; font-size: 16px;
-    }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
 
-    .actions { display: flex; gap: 10px; padding: 10px; }
-    button {
-        flex: 1; padding: 12px; border: none; border-radius: 10px;
-        font-size: 16px; font-weight: 600; background: #0a84ff; color: white;
-    }
-    .secondary { background: #2c2c2e; }
+  .ticket-item {
+    background: #1c1c1e;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+  }
 
-    #ticketList { padding-bottom: 20px; }
+  .ticket-item.done {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
 
-    .ticket {
-        background: #1c1c1e; margin: 10px; padding: 14px;
-        border-radius: 12px; border: 1px solid #2c2c2e;
-        word-break: break-word; white-space: pre-wrap;
-    }
+  .ticket-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
 
-    .ticket-header {
-        display: flex; justify-content: space-between;
-        font-size: 13px; margin-bottom: 6px; color: #a1a1a6;
-    }
+  .ticket-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+  }
 
-    .edit-btn { background: #ff9f0a; }
-    .delete-btn { background: #ff453a; }
+  .done { background: #30d158; }
+  .edit { background: #ffd60a; }
+  .delete { background: #ff453a; }
 
-    /* SCANNER */
-    #scannerPage {
-        position: fixed; inset: 0; background: #000;
-        display: none; flex-direction: column; z-index: 999;
-    }
+  /* QR Scanner */
+  #qrSection {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 999;
+  }
 
-    #camera {
-        width: 100vw; height: 100vh; object-fit: cover;
-    }
+  #qrVideo {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+  }
 
-    .frame {
-        position: absolute; top: 50%; left: 50%;
-        width: 260px; height: 260px; border-radius: 18px;
-        box-shadow: 0 0 0 2px #00ff99; transform: translate(-50%, -50%);
-    }
-
-    .laser {
-        position: absolute; left: 50%; width: 220px; height: 2px;
-        background: #ff453a; transform: translateX(-50%);
-        animation: scan 1.4s linear infinite;
-    }
-
-    @keyframes scan {
-        0% { top: calc(50% - 120px); opacity: 0.2; }
-        50% { opacity: 1; }
-        100% { top: calc(50% + 120px); opacity: 0.2; }
-    }
-
-    .back-btn {
-        position: absolute; top: 20px; left: 20px;
-        background: #ffffff22; padding: 8px 14px; border-radius: 999px;
-        border: none; color: #fff; font-size: 16px; z-index: 20;
-    }
+  .qr-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 260px;
+    height: 260px;
+    border: 2px solid #00ff99;
+    border-radius: 16px;
+    transform: translate(-50%, -50%);
+  }
 </style>
 </head>
 
 <body>
 
-<header>
-    <div class="title">Tickets</div>
-    <div class="lang-box">🌐
-        <select id="langSelect">
-            <option value="en">EN</option>
-            <option value="de">DE</option>
-            <option value="fa">FA</option>
-            <option value="fr">FR</option>
-            <option value="ja">JA</option>
-            <option value="he">HE</option>
-        </select>
-    </div>
-</header>
+<header>مدیریت تیکت</header>
 
-<div class="search-container">
-    <input id="searchInput" placeholder="Search...">
+<div class="container">
+
+  <input id="ticketTitle" placeholder="عنوان تیکت">
+  <textarea id="ticketNote" placeholder="یادداشت"></textarea>
+  <button id="addTicketBtn">افزودن تیکت</button>
+
+  <input id="searchInput" placeholder="جستجو..." style="margin-top:20px">
+
+  <select id="sortSelect">
+    <option value="newest">جدیدترین</option>
+    <option value="oldest">قدیمی‌ترین</option>
+    <option value="undone">انجام‌نشده‌ها</option>
+  </select>
+
+  <button id="scanQrBtn">اسکن QR</button>
+
+  <ul id="ticketList"></ul>
 </div>
 
-<div class="actions">
-    <button id="openScanner">Scan QR</button>
-    <button id="sortBtn" class="secondary">Sort</button>
-</div>
-
-<div id="ticketList"></div>
-
-<!-- SCANNER -->
-<div id="scannerPage">
-    <button class="back-btn" onclick="closeScanner()">← Back</button>
-    <video id="camera" autoplay playsinline></video>
-    <div class="frame"><div class="laser"></div></div>
+<!-- QR Scanner -->
+<div id="qrSection">
+  <video id="qrVideo" autoplay playsinline></video>
+  <div class="qr-frame"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
-/* ------------------ TICKETS ------------------ */
-let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
+// جلوگیری از اسکرول ناخواسته iPhone
+document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
-function saveTickets() { localStorage.setItem("tickets", JSON.stringify(tickets)); }
+document.addEventListener("DOMContentLoaded", () => {
+  const titleInput = document.getElementById("ticketTitle");
+  const noteInput = document.getElementById("ticketNote");
+  const addBtn = document.getElementById("addTicketBtn");
+  const ticketList = document.getElementById("ticketList");
+  const searchInput = document.getElementById("searchInput");
+  const sortSelect = document.getElementById("sortSelect");
 
-function renderTickets() {
-    const list = document.getElementById("ticketList");
-    list.innerHTML = "";
-    const search = document.getElementById("searchInput").value.toLowerCase();
+  const scanQrBtn = document.getElementById("scanQrBtn");
+  const qrSection = document.getElementById("qrSection");
+  const qrVideo = document.getElementById("qrVideo");
 
-    tickets
-        .filter(t => t.text.toLowerCase().includes(search))
-        .forEach((t, index) => {
-            const div = document.createElement("div");
-            div.className = "ticket";
-            div.innerHTML = `
-                <div class="ticket-header">
-                    <span>${new Date(t.date).toLocaleString()}</span>
-                    <div>
-                        <button class="edit-btn" onclick="editTicket(${index})">Edit</button>
-                        <button class="delete-btn" onclick="deleteTicket(${index})">Del</button>
-                    </div>
-                </div>
-                <div class="ticket-text">${t.text}</div>
-            `;
-            list.appendChild(div);
-        });
-}
-renderTickets();
+  let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
+  let scanning = false;
+  let stream = null;
 
-function deleteTicket(i) { tickets.splice(i, 1); saveTickets(); renderTickets(); }
-function editTicket(i) {
-    const newText = prompt("Edit ticket:", tickets[i].text);
-    if (newText !== null) { tickets[i].text = newText.trim(); saveTickets(); renderTickets(); }
-}
+  tickets.forEach(t => renderTicket(t));
 
-document.getElementById("sortBtn").addEventListener("click", () => {
-    tickets.sort((a, b) => new Date(b.date) - new Date(a.date));
-    saveTickets(); renderTickets();
-});
-document.getElementById("searchInput").addEventListener("input", renderTickets);
+  function saveTickets() {
+    localStorage.setItem("tickets", JSON.stringify(tickets));
+  }
 
-/* ------------------ QR SCANNER ------------------ */
-const scannerPage = document.getElementById("scannerPage");
-const video = document.getElementById("camera");
-document.getElementById("openScanner").onclick = openScanner;
+  addBtn.addEventListener("click", () => {
+    const title = titleInput.value.trim();
+    const note = noteInput.value.trim();
+    if (!title) return alert("عنوان لازم است");
 
-async function openScanner() {
-    scannerPage.style.display = "flex";
+    const ticket = { id: Date.now(), title, note, done: false };
+    tickets.push(ticket);
+    saveTickets();
+    renderTicket(ticket);
 
+    titleInput.value = "";
+    noteInput.value = "";
+  });
+
+  function renderTicket(ticket) {
+    const li = document.createElement("li");
+    li.className = "ticket-item";
+    if (ticket.done) li.classList.add("done");
+
+    li.innerHTML = `
+      <div class="ticket-title">${ticket.title}</div>
+      <div class="ticket-note">${ticket.note}</div>
+      <div class="ticket-actions">
+        <button class="ticket-btn done">انجام شد</button>
+        <button class="ticket-btn edit">ویرایش</button>
+        <button class="ticket-btn delete">حذف</button>
+      </div>
+    `;
+
+    li.querySelector(".done").onclick = () => {
+      ticket.done = !ticket.done;
+      saveTickets();
+      li.classList.toggle("done");
+    };
+
+    li.querySelector(".delete").onclick = () => {
+      tickets = tickets.filter(t => t.id !== ticket.id);
+      saveTickets();
+      li.remove();
+    };
+
+    li.querySelector(".edit").onclick = () => {
+      const newTitle = prompt("عنوان جدید:", ticket.title);
+      if (!newTitle) return;
+      const newNote = prompt("یادداشت جدید:", ticket.note);
+      if (newNote === null) return;
+
+      ticket.title = newTitle.trim();
+      ticket.note = newNote.trim();
+      saveTickets();
+
+      li.querySelector(".ticket-title").textContent = ticket.title;
+      li.querySelector(".ticket-note").textContent = ticket.note;
+    };
+
+    ticketList.append(li);
+  }
+
+  // جستجو
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim().toLowerCase();
+    document.querySelectorAll(".ticket-item").forEach(item => {
+      const title = item.querySelector(".ticket-title").textContent.toLowerCase();
+      const note = item.querySelector(".ticket-note").textContent.toLowerCase();
+      item.style.display = (title.includes(q) || note.includes(q)) ? "flex" : "none";
+    });
+  });
+
+  // مرتب‌سازی
+  sortSelect.addEventListener("change", () => {
+    const mode = sortSelect.value;
+    let sorted = [...tickets];
+
+    if (mode === "newest") sorted.sort((a, b) => b.id - a.id);
+    else if (mode === "oldest") sorted.sort((a, b) => a.id - b.id);
+    else if (mode === "undone") sorted.sort((a, b) => Number(a.done) - Number(b.done));
+
+    ticketList.innerHTML = "";
+    sorted.forEach(t => renderTicket(t));
+  });
+
+  // -------------------------------
+  // QR Scanner — jsQR (نسخه ۱۰۰٪ سازگار با iPhone)
+  // -------------------------------
+  scanQrBtn.addEventListener("click", async () => {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }
-        });
-        video.srcObject = stream;
-        scanLoop();
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+      });
+
+      qrVideo.srcObject = stream;
+      await qrVideo.play();
+
+      qrSection.style.display = "block";
+      scanning = true;
+      scanQrBtn.textContent = "توقف اسکن";
+
+      scanLoop();
     } catch (err) {
-        alert("Camera access denied.");
-        closeScanner();
+      alert("دسترسی به دوربین ممکن نیست.");
     }
-}
+  });
 
-function closeScanner() {
-    scannerPage.style.display = "none";
-    const stream = video.srcObject;
-    if (stream) stream.getTracks().forEach(t => t.stop());
-}
+  function stopScan() {
+    scanning = false;
+    scanQrBtn.textContent = "اسکن QR";
+    qrSection.style.display = "none";
 
-/* ------------------ iPHONE FIX: CROP + ROTATE + CENTER SCAN ------------------ */
-function scanLoop() {
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+    }
+  }
+
+  function scanLoop() {
+    if (!scanning) return;
+
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    function tick() {
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    canvas.width = qrVideo.videoWidth;
+    canvas.height = qrVideo.videoHeight;
 
-            const vw = video.videoWidth;
-            const vh = video.videoHeight;
+    ctx.drawImage(qrVideo, 0, 0, canvas.width, canvas.height);
 
-            canvas.width = vh;
-            canvas.height = vw;
+    const size = Math.min(canvas.width, canvas.height) * 0.6;
+    const sx = (canvas.width - size) / 2;
+    const sy = (canvas.height - size) / 2;
 
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate(-90 * Math.PI / 180);
-            ctx.drawImage(video, -vw / 2, -vh / 2);
-            ctx.restore();
+    const imgData = ctx.getImageData(sx, sy, size, size);
+    const code = jsQR(imgData.data, size, size);
 
-            const size = Math.min(canvas.width, canvas.height) * 0.6;
-            const sx = (canvas.width - size) / 2;
-            const sy = (canvas.height - size) / 2;
+    if (code && code.data) {
+      stopScan();
 
-            const imgData = ctx.getImageData(sx, sy, size, size);
-            const code = jsQR(imgData.data, size, size);
+      const ticket = {
+        id: Date.now(),
+        title: code.data,
+        note: "",
+        done: false
+      };
 
-            if (code && code.data) {
-                tickets.unshift({ text: code.data, date: Date.now() });
-                saveTickets();
-                renderTickets();
-                closeScanner();
-                return;
-            }
-        }
-        requestAnimationFrame(tick);
+      tickets.push(ticket);
+      saveTickets();
+      renderTicket(ticket);
+
+      alert("QR ثبت شد:\n" + code.data);
+      return;
     }
 
-    tick();
-}
+    requestAnimationFrame(scanLoop);
+  }
+});
 </script>
 
 </body>
