@@ -1,529 +1,381 @@
-/* ——— پایه ——— */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-}
-
-body {
-  background: #f2f2f7;
-  color: #1c1c1e;
-  direction: rtl;
-  padding: 16px;
-}
-
-.app {
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-.app-header {
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.app-header h1 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #111;
-}
-
-/* ——— انتخاب زبان (گلوبوس کوچک) ——— */
-.lang-switcher {
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  padding: 4px 6px;
-  font-size: 11px;
-  border-radius: 8px;
-  background: #fff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-  z-index: 999;
-}
-
-.lang-switcher option {
-  font-size: 12px;
-}
-
-/* ——— جستجو ——— */
-.search-box {
-  margin-bottom: 16px;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #d1d1d6;
-  background: #fafafa;
-  font-size: 15px;
-}
-
-/* ——— مرتب‌سازی ——— */
-.sort-box {
-  margin-bottom: 16px;
-}
-
-.sort-box select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #d1d1d6;
-  background: #fafafa;
-  font-size: 15px;
-}
-
-/* ——— فرم ——— */
-.ticket-form {
-  background: #fff;
-  padding: 16px;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.ticket-form input {
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #d1d1d6;
-  font-size: 15px;
-  background: #fafafa;
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.primary-btn,
-.secondary-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.primary-btn {
-  background: #ff7a1a;
-  color: #fff;
-}
-
-.secondary-btn {
-  background: #007aff;
-  color: #fff;
-}
-
-/* ——— QR ——— */
-.qr-section {
-  display: none;
-  margin-bottom: 16px;
-  background: #000;
-  border-radius: 14px;
-  overflow: hidden;
-  position: relative;
-}
-
-.qr-video {
-  width: 100%;
-  height: auto;
-}
-
-.qr-hint {
-  position: absolute;
-  bottom: 8px;
-  width: 100%;
-  text-align: center;
-  color: #fff;
-  font-size: 13px;
-}
-
-/* ——— لیست ——— */
-.ticket-list-section h2 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.ticket-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.ticket-item {
-  background: #fff;
-  padding: 14px;
-  border-radius: 14px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.ticket-item.done {
-  opacity: 0.55;
-  text-decoration: line-through;
-}
-
-.ticket-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.ticket-title {
-  font-weight: 600;
-  font-size: 15px;
-  color: #111;
-}
-
-.ticket-note {
-  font-size: 14px;
-  color: #555;
-}
-
-.ticket-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.ticket-btn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.ticket-btn.done {
-  background: #34c759;
-  color: #fff;
-}
-
-.ticket-btn.delete {
-  background: #ff3b30;
-  color: #fff;
-}
-
-.ticket-btn.edit {
-  background: #5856d6;
-  color: #fff;
-}
-
-/* ——— جلوگیری از بیرون‌زدن متن ——— */
-.ticket-list li,
-.ticket-list li * {
-  word-break: break-all !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
-  max-width: 100% !important;
-  line-height: 1.6;
-}
-.lang-switcher {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  padding: 2px 6px;
-  font-size: 10px;
-  border-radius: 6px;
-  background: #ffffff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  z-index: 999;
-}
-
-.lang-switcher option {
-  font-size: 12px;
-}
-/* ——— کوچک‌سازی کامل سربرگ و منوی زبان ——— */
-
-.app-header {
-  margin-bottom: 12px;
-}
-
-.app-header h1 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-top: 6px;
-}
-
-/* منوی زبان بسیار کوچک */
-.lang-switcher {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  padding: 2px 4px;
-  font-size: 9px;
-  border-radius: 6px;
-  background: #ffffff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  z-index: 999;
-  height: 18px;
-  line-height: 12px;
-}
-
-.lang-switcher option {
-  font-size: 10px;
-}
-/* ——— گلوبوس کمی بزرگ‌تر و خواناتر ——— */
-.lang-switcher {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  padding: 4px 8px;
-  font-size: 12px;   /* بزرگ‌تر شد */
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  z-index: 999;
-  height: 22px;      /* کمی بلندتر */
-  line-height: 14px;
-}
-
-.lang-switcher option {
-  font-size: 12px;
-}
-/* ——— اصلاح نهایی منوی زبان (ارتفاع کامل + گلوبوس واضح) ——— */
-
-.lang-switcher {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-
-  /* اندازه مناسب */
-  padding: 4px 8px;
-
-  /* این دو خط مشکل ارتفاع را 100٪ حل می‌کنند */
-  height: 26px;
-  line-height: 18px;
-
-  font-size: 13px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  z-index: 999;
-}
-
-.lang-switcher option {
-  font-size: 13px;
-}
-.lang-switcher {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  padding: 4px 8px;
-  height: 26px;
-  line-height: 18px;
-  font-size: 13px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  z-index: 999;
-}
-
-.lang-switcher option {
-  font-size: 13px;
-}
-/* ——— سوییچ حالت تاریک/روشن ——— */
-.theme-switcher {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  z-index: 999;
-  height: 26px;
-  line-height: 18px;
-}
-
-/* ——— حالت روشن ——— */
-:root {
-  --bg: #f2f2f7;
-  --text: #1c1c1e;
-  --card: #ffffff;
-  --border: #d1d1d6;
-}
-
-/* ——— حالت تاریک ——— */
-.dark-mode {
-  --bg: #000000;
-  --text: #f2f2f7;
-  --card: #1c1c1e;
-  --border: #3a3a3c;
-}
-
-/* ——— اعمال رنگ‌ها ——— */
-body {
-  background: var(--bg);
-  color: var(--text);
-}
-
-.ticket-form,
-.ticket-item {
-  background: var(--card);
-  border-color: var(--border);
-}
-
-.search-box input,
-.sort-box select,
-.ticket-form input {
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-/* ——— سوییچ حالت تاریک/روشن ——— */
-.theme-switcher {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  padding: 4px 6px;
-  font-size: 14px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  z-index: 999;
-  height: 26px;
-  line-height: 18px;
-}
-
-/* ——— حالت روشن ——— */
-:root {
-  --bg: #f2f2f7;
-  --text: #1c1c1e;
-  --card: #ffffff;
-  --border: #d1d1d6;
-}
-
-/* ——— حالت تاریک ——— */
-.dark-mode {
-  --bg: #000000;
-  --text: #f2f2f7;
-  --card: #1c1c1e;
-  --border: #3a3a3c;
-}
-
-/* ——— اعمال رنگ‌ها ——— */
-body {
-  background: var(--bg);
-  color: var(--text);
-}
-
-.ticket-form,
-.ticket-item {
-  background: var(--card);
-  border-color: var(--border);
-}
-
-.search-box input,
-.sort-box select,
-.ticket-form input {
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-/* ——— نسخهٔ نهایی سوییچ تم (همیشه قابل‌دیدن) ——— */
-
-.theme-switcher {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-
-  padding: 4px 10px;
-
-  /* ارتفاع درست و بدون بریدگی */
-  height: 30px;
-  line-height: 22px;
-
-  font-size: 15px;
-
-  /* مهم‌ترین بخش: پس‌زمینه همیشه روشن */
-  background: #ffffff !important;
-
-  /* در حالت تاریک هم روشن بماند */
-  color: #000 !important;
-
-  border-radius: 8px;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-
-  z-index: 999;
-}
-
-.theme-switcher option {
-  font-size: 15px;
-  background: #ffffff;
-  color: #000;
-}
-/* ——— دکمه‌های گرد و زیبا برای زبان و تم ——— */
-
-.header-button {
-  position: absolute;
-  top: 6px;
-  width: 32px;
-  height: 32px;
-
-  background: #ffffff !important;
-  color: #000 !important;
-
-  border-radius: 50%;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 16px;
-  z-index: 999;
-}
-
-/* زبان سمت چپ */
-.lang-switcher {
-  left: 6px;
-}
-
-/* تم سمت راست */
-.theme-switcher {
-  right: 6px;
-}
-
-/* داخل select */
-.header-button option {
-  background: #ffffff;
-  color: #000;
-  font-size: 14px;
-}
-/* ——— عنوان وسط در حالت روشن ——— */
-.app-header h1 {
-  color: #111;
-  font-size: 20px;
-  font-weight: 700;
-  margin-top: 6px;
-}
-
-/* ——— عنوان وسط در حالت تاریک ——— */
-.dark-mode .app-header h1 {
-  color: #ffffff;        /* سفید واقعی */
-  text-shadow: 0 0 6px rgba(255,255,255,0.35); /* درخشش ملایم */
-}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ticketverwaltung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    /* ---------------------------------------------------
+       iOS 17 Modern Rounded — Clean, Professional, Final
+    --------------------------------------------------- */
+
+    :root {
+      --bg-light: #f2f2f7;
+      --bg-dark: #000000;
+      --card-light: #ffffff;
+      --card-dark: #1c1c1e;
+      --text-light: #1c1c1e;
+      --text-dark: #ffffff;
+      --text-muted-light: #6e6e73;
+      --text-muted-dark: #a1a1a6;
+      --border-light: #d1d1d6;
+      --border-dark: #3a3a3c;
+      --primary: #007aff;
+      --secondary: #ff9500;
+      --danger: #ff3b30;
+      --success: #34c759;
+      --edit: #5856d6;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-light: 0 10px 25px rgba(0,0,0,0.08);
+      --shadow-dark: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card-light);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: var(--shadow-light);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: .25s ease;
+    }
+
+    body.dark .card {
+      background: var(--card-dark);
+      box-shadow: var(--shadow-dark);
+      border-color: rgba(255,255,255,0.06);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      flex: 1;
+    }
+
+    .header-side {
+      width: 90px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .header-side.right {
+      justify-content: flex-end;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid var(--border-light);
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    body.dark .icon-btn {
+      background: rgba(28,28,30,0.95);
+      border-color: var(--border-dark);
+    }
+
+    .icon-btn:active {
+      transform: scale(.95);
+    }
+
+    /* Language Switcher */
+    .lang-switcher {
+      display: flex;
+      background: rgba(242,242,247,0.9);
+      border-radius: 999px;
+      border: 1px solid var(--border-light);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    body.dark .lang-switcher {
+      background: rgba(28,28,30,0.95);
+      border-color: var(--border-dark);
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+      opacity: .6;
+      transition: .2s ease;
+    }
+
+    .lang-btn.active {
+      background: rgba(0,122,255,0.15);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* Search */
+    .search-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .search-input,
+    .select,
+    .field {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      padding: 10px 12px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.9);
+      transition: .2s ease;
+    }
+
+    body.dark .search-input,
+    body.dark .select,
+    body.dark .field {
+      background: rgba(28,28,30,0.95);
+      border-color: var(--border-dark);
+    }
+
+    .select {
+      min-width: 110px;
+    }
+
+    /* Buttons */
+    .actions-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--primary);
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+    }
+
+    .btn:active {
+      transform: scale(.96);
+    }
+
+    /* Ticket Card */
+    .ticket-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: .25s ease;
+    }
+
+    body.dark .ticket-card {
+      background: rgba(28,28,30,0.98);
+      border-color: var(--border-dark);
+    }
+
+    .ticket-url {
+      font-size: 11px;
+      color: var(--text-muted-light);
+      word-break: break-all;
+    }
+
+    body.dark .ticket-url {
+      color: var(--text-muted-dark);
+    }
+
+    .ticket-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .ticket-btn {
+      flex: 1;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .ticket-btn.delete { background: var(--danger); }
+    .ticket-btn.edit { background: var(--edit); }
+    .ticket-btn.done { background: var(--success); }
+
+    .ticket-btn:active {
+      transform: scale(.96);
+    }
+
+    /* RTL */
+    .rtl { direction: rtl; }
+    .rtl .search-row { flex-direction: row-reverse; }
+    .rtl .ticket-actions { flex-direction: row-reverse; }
+  </style>
+</head>
+
+<body>
+  <div class="app" id="app">
+
+    <div class="card">
+      <div class="header">
+        <div class="header-side">
+          <div class="icon-btn">🌐</div>
+        </div>
+
+        <div class="header-title" id="titleText">Ticketverwaltung</div>
+
+        <div class="header-side right">
+          <div class="lang-switcher" id="langSwitcher">
+            <button class="lang-btn active" data-lang="DE">DE</button>
+            <button class="lang-btn" data-lang="EN">EN</button>
+            <button class="lang-btn" data-lang="FA">FA</button>
+            <button class="lang-btn" data-lang="HE">HE</button>
+            <button class="lang-btn" data-lang="JP">JP</button>
+            <button class="lang-btn" data-lang="FR">FR</button>
+          </div>
+
+          <div class="icon-btn" id="themeToggle">🌙</div>
+        </div>
+      </div>
+
+      <div class="search-row">
+        <input id="searchInput" class="search-input" placeholder="Suche..." />
+        <select id="sortSelect" class="select">
+          <option>Neueste</option>
+          <option>Älteste</option>
+        </select>
+      </div>
+
+      <input id="titleInput" class="field" placeholder="Ticket Titel" />
+      <input id="noteInput" class="field" placeholder="Notiz" />
+
+      <div class="actions-row">
+        <button class="btn" id="scanBtn">QR scannen</button>
+        <button class="btn btn-secondary" id="addBtn">Ticket hinzufügen</button>
+      </div>
+
+      <div class="ticket-card">
+        <div class="ticket-url">
+          https://7melons.ch/de/register#utm_source=Post&utm_medium=KZ&utm_campaign=Kassenzettel&utm_id=887432
+        </div>
+
+        <div class="ticket-actions">
+          <button class="ticket-btn delete" id="deleteBtn">Löschen</button>
+          <button class="ticket-btn edit" id="editBtn">Bearbeiten</button>
+          <button class="ticket-btn done" id="doneBtn">Erledigt</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const strings = {
+      DE:{dir:"ltr",title:"Ticketverwaltung",search:"Suche...",newest:"Neueste",oldest:"Älteste",ticketTitle:"Ticket Titel",note:"Notiz",scan:"QR scannen",add:"Ticket hinzufügen",del:"Löschen",edit:"Bearbeiten",done:"Erledigt"},
+      EN:{dir:"ltr",title:"Ticket Management",search:"Search...",newest:"Newest",oldest:"Oldest",ticketTitle:"Ticket Title",note:"Note",scan:"Scan QR",add:"Add Ticket",del:"Delete",edit:"Edit",done:"Done"},
+      FA:{dir:"rtl",title:"مدیریت تیکت‌ها",search:"...جستجو",newest:"جدیدترین",oldest:"قدیمی‌ترین",ticketTitle:"عنوان تیکت",note:"یادداشت",scan:"اسکن QR",add:"افزودن تیکت",del:"حذف",edit:"ویرایش",done:"انجام شد"},
+      HE:{dir:"rtl",title:"ניהול כרטיסים",search:"...חיפוש",newest:"החדשים ביותר",oldest:"הישנים ביותר",ticketTitle:"כותרת הכרטיס",note:"הערה",scan:"סרוק QR",add:"הוספת כרטיס",del:"למחוק",edit:"עריכה",done:"בוצע"},
+      JP:{dir:"ltr",title:"チケット管理",search:"検索…",newest:"最新",oldest:"最古",ticketTitle:"チケットタイトル",note:"メモ",scan:"QRコード読み取り",add:"チケット追加",del:"削除",edit:"編集",done:"完了"},
+      FR:{dir:"ltr",title:"Gestion des Tickets",search:"Recherche...",newest:"Plus récent",oldest:"Plus ancien",ticketTitle:"Titre du ticket",note:"Note",scan:"Scanner QR",add:"Ajouter un ticket",del:"Supprimer",edit:"Modifier",done:"Terminé"}
+    };
+
+    const app=document.getElementById("app");
+    const titleText=document.getElementById("titleText");
+    const searchInput=document.getElementById("searchInput");
+    const sortSelect=document.getElementById("sortSelect");
+    const titleInput=document.getElementById("titleInput");
+    const noteInput=document.getElementById("noteInput");
+    const scanBtn=document.getElementById("scanBtn");
+    const addBtn=document.getElementById("addBtn");
+    const deleteBtn=document.getElementById("deleteBtn");
+    const editBtn=document.getElementById("editBtn");
+    const doneBtn=document.getElementById("doneBtn");
+
+    document.getElementById("langSwitcher").addEventListener("click",e=>{
+      const btn=e.target.closest(".lang-btn");
+      if(!btn)return;
+      const lang=btn.dataset.lang;
+      const s=strings[lang];
+
+      document.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+
+      document.documentElement.dir=s.dir;
+      if(s.dir==="rtl") app.classList.add("rtl");
+      else app.classList.remove("rtl");
+
+      titleText.textContent=s.title;
+      searchInput.placeholder=s.search;
+      sortSelect.options[0].textContent=s.newest;
+      sortSelect.options[1].textContent=s.oldest;
+      titleInput.placeholder=s.ticketTitle;
+      noteInput.placeholder=s.note;
+      scanBtn.textContent=s.scan;
+      addBtn.textContent=s.add;
+      deleteBtn.textContent=s.del;
+      editBtn.textContent=s.edit;
+      doneBtn.textContent=s.done;
+    });
+
+    document.getElementById("themeToggle").addEventListener("click",()=>{
+      document.body.classList.toggle("dark");
+      event.target.textContent=document.body.classList.contains("dark")?"☀️":"🌙";
+    });
+  </script>
+</body>
+</html>
