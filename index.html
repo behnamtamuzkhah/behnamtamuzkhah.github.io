@@ -310,7 +310,7 @@ function stopCamera() {
     if (stream) stream.getTracks().forEach(t => t.stop());
 }
 
-/* ------------------ FIX: ROTATE FRAME FOR iPHONE ------------------ */
+/* ------------------ FIX: iPHONE ROTATION + CANVAS ------------------ */
 function scanLoop() {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -318,13 +318,16 @@ function scanLoop() {
     function tick() {
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
 
-            canvas.width = video.videoHeight;
-            canvas.height = video.videoWidth;
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+
+            canvas.width = vh;
+            canvas.height = vw;
 
             ctx.save();
             ctx.translate(canvas.width / 2, canvas.height / 2);
             ctx.rotate(-90 * Math.PI / 180);
-            ctx.drawImage(video, -video.videoWidth / 2, -video.videoHeight / 2);
+            ctx.drawImage(video, -vw / 2, -vh / 2);
             ctx.restore();
 
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
