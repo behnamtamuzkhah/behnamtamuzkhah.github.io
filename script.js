@@ -1,3 +1,6 @@
+document.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+}, { passive: false });
 document.addEventListener("DOMContentLoaded", () => {
   const titleInput = document.getElementById("ticketTitle");
   const noteInput = document.getElementById("ticketNote");
