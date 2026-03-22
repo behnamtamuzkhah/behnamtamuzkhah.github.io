@@ -132,35 +132,35 @@ document.addEventListener("DOMContentLoaded", () => {
     sorted.forEach(t => renderTicket(t));
   });
 
-  // QR Scanner با BarcodeDetector
+  // -------------------------------
+  // QR Scanner — حالت C (ساخت تیکت کامل)
+  // -------------------------------
   scanQrBtn.addEventListener("click", async () => {
-    if (!scanning) {
-      try {
-        detector = new BarcodeDetector({ formats: ["qr_code"] });
+    if (!("BarcodeDetector" in window)) {
+      alert("این دستگاه از QR Scanner پشتیبانی نمی‌کند.");
+      return;
+    }
 
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" }
-        });
+    try {
+      detector = new BarcodeDetector({ formats: ["qr_code"] });
 
-        qrVideo.srcObject = stream;
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+      });
 
-        qrVideo.setAttribute("playsinline", true);
-        qrVideo.setAttribute("muted", true);
-        qrVideo.setAttribute("autoplay", true);
-        qrVideo.load();
+      qrVideo.srcObject = stream;
+      qrVideo.setAttribute("playsinline", true);
+      qrVideo.setAttribute("muted", true);
+      qrVideo.setAttribute("autoplay", true);
+      await qrVideo.play();
 
-        await qrVideo.play();
+      qrSection.style.display = "block";
+      scanning = true;
+      scanQrBtn.textContent = "توقف اسکن";
 
-        qrSection.style.display = "block";
-        scanning = true;
-        scanQrBtn.textContent = "توقف اسکن";
-
-        scanLoop();
-      } catch (err) {
-        alert("دسترسی به دوربین ممکن نیست.");
-      }
-    } else {
-      stopScan();
+      scanLoop();
+    } catch (err) {
+      alert("دسترسی به دوربین ممکن نیست.");
     }
   });
 
@@ -172,8 +172,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (results.length > 0) {
         const qr = results[0].rawValue;
-        noteInput.value = qr;
+
+        // توقف اسکن
         stopScan();
+
+        // ساخت تیکت کامل
+        const ticket = {
+          id: Date.now(),
+          title: qr,
+          note: "",
+          done: false
+        };
+
+        tickets.push(ticket);
+        saveTickets();
+        renderTicket(ticket);
+
+        alert("QR ثبت شد:\n" + qr);
         return;
       }
     } catch (e) {
