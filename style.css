@@ -475,3 +475,42 @@ body {
   background: #ffffff;
   color: #000;
 }
+/* ——— دکمه‌های گرد و زیبا برای زبان و تم ——— */
+
+.header-button {
+  position: absolute;
+  top: 6px;
+  width: 32px;
+  height: 32px;
+
+  background: #ffffff !important;
+  color: #000 !important;
+
+  border-radius: 50%;
+  border: 1px solid #d1d1d6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  z-index: 999;
+}
+
+/* زبان سمت چپ */
+.lang-switcher {
+  left: 6px;
+}
+
+/* تم سمت راست */
+.theme-switcher {
+  right: 6px;
+}
+
+/* داخل select */
+.header-button option {
+  background: #ffffff;
+  color: #000;
+  font-size: 14px;
+}
