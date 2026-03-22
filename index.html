@@ -7,98 +7,49 @@
 
 <style>
     :root { color-scheme: dark; }
-
-    body {
-        margin: 0;
-        background: #000;
-        color: #f5f5f7;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+    body { margin: 0; background: #000; color: #fff; font-family: -apple-system; }
 
     header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 16px;
-        background: #111;
-        border-bottom: 1px solid #222;
-        position: sticky;
-        top: 0;
-        z-index: 20;
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 16px; background: #111; border-bottom: 1px solid #222;
+        position: sticky; top: 0; z-index: 20;
     }
 
     .title { font-size: 20px; font-weight: 600; }
 
     .lang-box {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: #1c1c1e;
-        padding: 4px 8px;
-        border-radius: 8px;
+        display: flex; align-items: center; gap: 6px;
+        background: #1c1c1e; padding: 4px 8px; border-radius: 8px;
     }
 
     .lang-box select {
-        border: none;
-        background: transparent;
-        color: #fff;
-        font-size: 14px;
-        outline: none;
+        border: none; background: transparent; color: #fff; font-size: 14px; outline: none;
     }
 
-    .search-container {
-        padding: 10px;
-        background: #000;
-        border-bottom: 1px solid #222;
-    }
-
+    .search-container { padding: 10px; border-bottom: 1px solid #222; }
     .search-container input {
-        width: 100%;
-        padding: 12px;
-        border-radius: 10px;
-        border: 1px solid #333;
-        background: #1c1c1e;
-        color: #fff;
-        font-size: 16px;
+        width: 100%; padding: 12px; border-radius: 10px;
+        border: 1px solid #333; background: #1c1c1e; color: #fff; font-size: 16px;
     }
 
-    .actions {
-        display: flex;
-        gap: 10px;
-        padding: 10px;
-    }
-
+    .actions { display: flex; gap: 10px; padding: 10px; }
     button {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        background: #0a84ff;
-        color: white;
+        flex: 1; padding: 12px; border: none; border-radius: 10px;
+        font-size: 16px; font-weight: 600; background: #0a84ff; color: white;
     }
-
     .secondary { background: #2c2c2e; }
 
     #ticketList { padding-bottom: 20px; }
 
     .ticket {
-        background: #1c1c1e;
-        margin: 10px;
-        padding: 14px;
-        border-radius: 12px;
-        border: 1px solid #2c2c2e;
-        word-break: break-word;
-        white-space: pre-wrap;
+        background: #1c1c1e; margin: 10px; padding: 14px;
+        border-radius: 12px; border: 1px solid #2c2c2e;
+        word-break: break-word; white-space: pre-wrap;
     }
 
     .ticket-header {
-        display: flex;
-        justify-content: space-between;
-        font-size: 13px;
-        margin-bottom: 6px;
-        color: #a1a1a6;
+        display: flex; justify-content: space-between;
+        font-size: 13px; margin-bottom: 6px; color: #a1a1a6;
     }
 
     .edit-btn { background: #ff9f0a; }
@@ -106,38 +57,23 @@
 
     /* SCANNER */
     #scannerPage {
-        position: fixed;
-        inset: 0;
-        background: #000;
-        display: none;
-        flex-direction: column;
-        z-index: 999;
+        position: fixed; inset: 0; background: #000;
+        display: none; flex-direction: column; z-index: 999;
     }
 
     #camera {
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
+        width: 100vw; height: 100vh; object-fit: cover;
     }
 
     .frame {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 260px;
-        height: 260px;
-        border-radius: 18px;
-        box-shadow: 0 0 0 2px #00ff99;
-        transform: translate(-50%, -50%);
+        position: absolute; top: 50%; left: 50%;
+        width: 260px; height: 260px; border-radius: 18px;
+        box-shadow: 0 0 0 2px #00ff99; transform: translate(-50%, -50%);
     }
 
     .laser {
-        position: absolute;
-        left: 50%;
-        width: 220px;
-        height: 2px;
-        background: #ff453a;
-        transform: translateX(-50%);
+        position: absolute; left: 50%; width: 220px; height: 2px;
+        background: #ff453a; transform: translateX(-50%);
         animation: scan 1.4s linear infinite;
     }
 
@@ -148,16 +84,9 @@
     }
 
     .back-btn {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: #ffffff22;
-        padding: 8px 14px;
-        border-radius: 999px;
-        border: none;
-        color: #fff;
-        font-size: 16px;
-        z-index: 20;
+        position: absolute; top: 20px; left: 20px;
+        background: #ffffff22; padding: 8px 14px; border-radius: 999px;
+        border: none; color: #fff; font-size: 16px; z-index: 20;
     }
 </style>
 </head>
@@ -165,10 +94,8 @@
 <body>
 
 <header>
-    <div class="title" data-i18n="title">Tickets</div>
-
-    <div class="lang-box">
-        🌐
+    <div class="title">Tickets</div>
+    <div class="lang-box">🌐
         <select id="langSelect">
             <option value="en">EN</option>
             <option value="de">DE</option>
@@ -181,12 +108,12 @@
 </header>
 
 <div class="search-container">
-    <input id="searchInput" data-i18n-placeholder="search" placeholder="Search...">
+    <input id="searchInput" placeholder="Search...">
 </div>
 
 <div class="actions">
-    <button id="openScanner" data-i18n="scan">Scan QR</button>
-    <button id="sortBtn" class="secondary" data-i18n="sort">Sort</button>
+    <button id="openScanner">Scan QR</button>
+    <button id="sortBtn" class="secondary">Sort</button>
 </div>
 
 <div id="ticketList"></div>
@@ -201,36 +128,10 @@
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
-/* ------------------ LANG ------------------ */
-const translations = {
-    en: { title: "Tickets", scan: "Scan QR", sort: "Sort", search: "Search..." },
-    de: { title: "Tickets", scan: "QR scannen", sort: "Sortieren", search: "Suchen..." },
-    fa: { title: "تیکت‌ها", scan: "اسکن QR", sort: "مرتب‌سازی", search: "جستجو..." },
-    fr: { title: "Billets", scan: "Scanner QR", sort: "Trier", search: "Rechercher..." },
-    ja: { title: "チケット", scan: "QRスキャン", sort: "並べ替え", search: "検索..." },
-    he: { title: "כרטיסים", scan: "סרוק QR", sort: "מיין", search: "חיפוש..." }
-};
-
-function applyLanguage(lang) {
-    document.querySelectorAll("[data-i18n]").forEach(el => {
-        el.textContent = translations[lang][el.dataset.i18n];
-    });
-    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-        el.placeholder = translations[lang][el.dataset.i18n-placeholder];
-    });
-    localStorage.setItem("lang", lang);
-}
-
-const langSelect = document.getElementById("langSelect");
-langSelect.addEventListener("change", e => applyLanguage(e.target.value));
-applyLanguage(localStorage.getItem("lang") || "en");
-
 /* ------------------ TICKETS ------------------ */
 let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
 
-function saveTickets() {
-    localStorage.setItem("tickets", JSON.stringify(tickets));
-}
+function saveTickets() { localStorage.setItem("tickets", JSON.stringify(tickets)); }
 
 function renderTickets() {
     const list = document.getElementById("ticketList");
@@ -257,27 +158,16 @@ function renderTickets() {
 }
 renderTickets();
 
-function deleteTicket(i) {
-    tickets.splice(i, 1);
-    saveTickets();
-    renderTickets();
-}
-
+function deleteTicket(i) { tickets.splice(i, 1); saveTickets(); renderTickets(); }
 function editTicket(i) {
     const newText = prompt("Edit ticket:", tickets[i].text);
-    if (newText !== null) {
-        tickets[i].text = newText.trim();
-        saveTickets();
-        renderTickets();
-    }
+    if (newText !== null) { tickets[i].text = newText.trim(); saveTickets(); renderTickets(); }
 }
 
 document.getElementById("sortBtn").addEventListener("click", () => {
     tickets.sort((a, b) => new Date(b.date) - new Date(a.date));
-    saveTickets();
-    renderTickets();
+    saveTickets(); renderTickets();
 });
-
 document.getElementById("searchInput").addEventListener("input", renderTickets);
 
 /* ------------------ QR SCANNER ------------------ */
@@ -302,15 +192,11 @@ async function openScanner() {
 
 function closeScanner() {
     scannerPage.style.display = "none";
-    stopCamera();
-}
-
-function stopCamera() {
     const stream = video.srcObject;
     if (stream) stream.getTracks().forEach(t => t.stop());
 }
 
-/* ------------------ FIX: iPHONE ROTATION + CANVAS ------------------ */
+/* ------------------ iPHONE FIX: CROP + ROTATE + CENTER SCAN ------------------ */
 function scanLoop() {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -330,8 +216,12 @@ function scanLoop() {
             ctx.drawImage(video, -vw / 2, -vh / 2);
             ctx.restore();
 
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imgData.data, canvas.width, canvas.height);
+            const size = Math.min(canvas.width, canvas.height) * 0.6;
+            const sx = (canvas.width - size) / 2;
+            const sy = (canvas.height - size) / 2;
+
+            const imgData = ctx.getImageData(sx, sy, size, size);
+            const code = jsQR(imgData.data, size, size);
 
             if (code && code.data) {
                 tickets.unshift({ text: code.data, date: Date.now() });
