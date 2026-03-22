@@ -15,7 +15,6 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* HEADER */
     header {
         display: flex;
         justify-content: space-between;
@@ -28,10 +27,7 @@
         z-index: 20;
     }
 
-    .title {
-        font-size: 20px;
-        font-weight: 600;
-    }
+    .title { font-size: 20px; font-weight: 600; }
 
     .lang-box {
         display: flex;
@@ -50,11 +46,6 @@
         outline: none;
     }
 
-    .lang-box select option {
-        color: #000;
-    }
-
-    /* SEARCH */
     .search-container {
         padding: 10px;
         background: #000;
@@ -71,7 +62,6 @@
         font-size: 16px;
     }
 
-    /* BUTTONS */
     .actions {
         display: flex;
         gap: 10px;
@@ -89,14 +79,9 @@
         color: white;
     }
 
-    .secondary {
-        background: #2c2c2e;
-    }
+    .secondary { background: #2c2c2e; }
 
-    /* TICKETS */
-    #ticketList {
-        padding-bottom: 20px;
-    }
+    #ticketList { padding-bottom: 20px; }
 
     .ticket {
         background: #1c1c1e;
@@ -116,26 +101,10 @@
         color: #a1a1a6;
     }
 
-    .ticket-text {
-        font-size: 16px;
-        line-height: 1.4;
-        color: #f5f5f7;
-    }
-
-    .edit-btn,
-    .delete-btn {
-        border-radius: 8px;
-        padding: 4px 8px;
-        font-size: 13px;
-        border: none;
-        margin-left: 4px;
-        color: #fff;
-    }
-
     .edit-btn { background: #ff9f0a; }
     .delete-btn { background: #ff453a; }
 
-    /* SCANNER OVERLAY */
+    /* SCANNER */
     #scannerPage {
         position: fixed;
         inset: 0;
@@ -190,15 +159,6 @@
         font-size: 16px;
         z-index: 20;
     }
-
-    .hint {
-        position: absolute;
-        bottom: 40px;
-        width: 100%;
-        text-align: center;
-        font-size: 14px;
-        color: #d1d1d6;
-    }
 </style>
 </head>
 
@@ -231,20 +191,17 @@
 
 <div id="ticketList"></div>
 
-<!-- SCANNER PAGE -->
+<!-- SCANNER -->
 <div id="scannerPage">
     <button class="back-btn" onclick="closeScanner()">← Back</button>
     <video id="camera" autoplay playsinline></video>
-    <div class="frame">
-        <div class="laser"></div>
-    </div>
-    <div class="hint">Align the QR code inside the frame</div>
+    <div class="frame"><div class="laser"></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
-/* ------------------ MULTILINGUAL ------------------ */
+/* ------------------ LANG ------------------ */
 const translations = {
     en: { title: "Tickets", scan: "Scan QR", sort: "Sort", search: "Search..." },
     de: { title: "Tickets", scan: "QR scannen", sort: "Sortieren", search: "Suchen..." },
@@ -266,9 +223,7 @@ function applyLanguage(lang) {
 
 const langSelect = document.getElementById("langSelect");
 langSelect.addEventListener("change", e => applyLanguage(e.target.value));
-const savedLang = localStorage.getItem("lang") || "en";
-langSelect.value = savedLang;
-applyLanguage(savedLang);
+applyLanguage(localStorage.getItem("lang") || "en");
 
 /* ------------------ TICKETS ------------------ */
 let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
@@ -333,12 +288,6 @@ document.getElementById("openScanner").onclick = openScanner;
 async function openScanner() {
     scannerPage.style.display = "flex";
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Camera API not available (need https and a real device).");
-        closeScanner();
-        return;
-    }
-
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: "environment" }
@@ -346,7 +295,7 @@ async function openScanner() {
         video.srcObject = stream;
         scanLoop();
     } catch (err) {
-        alert("Camera access denied or failed.");
+        alert("Camera access denied.");
         closeScanner();
     }
 }
@@ -358,20 +307,25 @@ function closeScanner() {
 
 function stopCamera() {
     const stream = video.srcObject;
-    if (stream && stream.getTracks) {
-        stream.getTracks().forEach(t => t.stop());
-    }
+    if (stream) stream.getTracks().forEach(t => t.stop());
 }
 
+/* ------------------ FIX: ROTATE FRAME FOR iPHONE ------------------ */
 function scanLoop() {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     function tick() {
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.width = video.videoHeight;
+            canvas.height = video.videoWidth;
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(-90 * Math.PI / 180);
+            ctx.drawImage(video, -video.videoWidth / 2, -video.videoHeight / 2);
+            ctx.restore();
 
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const code = jsQR(imgData.data, canvas.width, canvas.height);
@@ -393,4 +347,3 @@ function scanLoop() {
 
 </body>
 </html>
-
