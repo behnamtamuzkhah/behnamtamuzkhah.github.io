@@ -1,9 +1,8 @@
+// جلوگیری از bounce و اسکرول ناخواسته در iPhone
 document.addEventListener('touchmove', function(e) {
   e.preventDefault();
 }, { passive: false });
-document.addEventListener('touchmove', function(e) {
-  e.preventDefault();
-}, { passive: false });
+
 document.addEventListener("DOMContentLoaded", () => {
   const titleInput = document.getElementById("ticketTitle");
   const noteInput = document.getElementById("ticketNote");
@@ -179,10 +178,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (results.length > 0) {
         const qr = results[0].rawValue;
 
-        // توقف اسکن
         stopScan();
 
-        // ساخت تیکت کامل
         const ticket = {
           id: Date.now(),
           title: qr,
