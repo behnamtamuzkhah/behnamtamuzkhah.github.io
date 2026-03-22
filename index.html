@@ -1,123 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ticket Manager</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ticket Manager</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f5f5f7;
-            color: #333;
-        }
+<style>
+    :root { color-scheme: dark; }
 
-        /* HEADER */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px;
-            background: #ffffff;
-            border-bottom: 1px solid #ddd;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
+    body {
+        margin: 0;
+        background: #000;
+        color: #f5f5f7;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-        .title {
-            font-size: 18px;
-            font-weight: 600;
-        }
+    /* HEADER */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background: #111;
+        border-bottom: 1px solid #222;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
 
-        /* LANGUAGE SELECTOR */
-        .lang-box {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 8px;
-        }
+    .title {
+        font-size: 20px;
+        font-weight: 600;
+    }
 
-        .lang-box select {
-            border: none;
-            background: transparent;
-            font-size: 14px;
-            outline: none;
-        }
+    .lang-box {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #1c1c1e;
+        padding: 4px 8px;
+        border-radius: 8px;
+    }
 
-        /* SEARCH BAR */
-        .search-container {
-            padding: 10px;
-            background: #fff;
-            border-bottom: 1px solid #ddd;
-        }
+    .lang-box select {
+        border: none;
+        background: transparent;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+    }
 
-        .search-container input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
+    /* SEARCH */
+    .search-container {
+        padding: 10px;
+        background: #000;
+        border-bottom: 1px solid #222;
+    }
 
-        /* BUTTONS */
-        .actions {
-            display: flex;
-            gap: 10px;
-            padding: 10px;
-        }
+    .search-container input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #333;
+        background: #1c1c1e;
+        color: #fff;
+        font-size: 16px;
+    }
 
-        button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            background: #007aff;
-            color: white;
-        }
+    /* BUTTONS */
+    .actions {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+    }
 
-        .secondary {
-            background: #e5e5ea;
-            color: #333;
-        }
+    button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        background: #0a84ff;
+        color: white;
+    }
 
-        /* TICKET LIST */
-        .ticket {
-            background: white;
-            margin: 10px;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            word-break: break-word;
-            white-space: pre-wrap;
-        }
+    .secondary {
+        background: #2c2c2e;
+    }
 
-        .ticket-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
+    /* TICKETS */
+    .ticket {
+        background: #1c1c1e;
+        margin: 10px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid #2c2c2e;
+        word-break: break-word;
+        white-space: pre-wrap;
+    }
 
-        .ticket-text {
-            font-size: 16px;
-            line-height: 1.4;
-        }
+    .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        margin-bottom: 6px;
+        color: #a1a1a6;
+    }
 
-        /* EDIT MODE */
-        .edit-btn {
-            background: #ff9500;
-        }
+    .edit-btn { background: #ff9f0a; }
+    .delete-btn { background: #ff453a; }
 
-        .delete-btn {
-            background: #ff3b30;
-        }
-    </style>
+    /* SCANNER OVERLAY */
+    #scannerPage {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        display: none;
+        flex-direction: column;
+        z-index: 999;
+    }
+
+    #camera {
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+    }
+
+    .frame {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 260px;
+        height: 260px;
+        border-radius: 18px;
+        box-shadow: 0 0 0 2px #00ff99;
+        transform: translate(-50%, -50%);
+    }
+
+    .laser {
+        position: absolute;
+        left: 50%;
+        width: 220px;
+        height: 2px;
+        background: #ff453a;
+        transform: translateX(-50%);
+        animation: scan 1.4s linear infinite;
+    }
+
+    @keyframes scan {
+        0% { top: calc(50% - 120px); opacity: 0.2; }
+        50% { opacity: 1; }
+        100% { top: calc(50% + 120px); opacity: 0.2; }
+    }
+
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: #ffffff22;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        z-index: 20;
+    }
+</style>
 </head>
 
 <body>
@@ -139,18 +188,29 @@
 </header>
 
 <div class="search-container">
-    <input id="searchInput" type="text" data-i18n-placeholder="search" placeholder="Search...">
+    <input id="searchInput" data-i18n-placeholder="search" placeholder="Search...">
 </div>
 
 <div class="actions">
-    <button id="scanBtn" data-i18n="scan">Scan QR</button>
+    <button id="openScanner" data-i18n="scan">Scan QR</button>
     <button id="sortBtn" class="secondary" data-i18n="sort">Sort</button>
 </div>
 
 <div id="ticketList"></div>
 
+<!-- SCANNER PAGE -->
+<div id="scannerPage">
+    <button class="back-btn" onclick="closeScanner()">← Back</button>
+    <video id="camera" autoplay playsinline></video>
+    <div class="frame">
+        <div class="laser"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
 <script>
-/* ------------------ MULTILINGUAL TEXT ------------------ */
+/* ------------------ MULTILINGUAL ------------------ */
 const translations = {
     en: { title: "Tickets", scan: "Scan QR", sort: "Sort", search: "Search..." },
     de: { title: "Tickets", scan: "QR scannen", sort: "Sortieren", search: "Suchen..." },
@@ -170,16 +230,14 @@ function applyLanguage(lang) {
     localStorage.setItem("lang", lang);
 }
 
-document.getElementById("langSelect").addEventListener("change", e => {
-    applyLanguage(e.target.value);
-});
+const langSelect = document.getElementById("langSelect");
+langSelect.addEventListener("change", e => applyLanguage(e.target.value));
 
-/* Load saved language */
 const savedLang = localStorage.getItem("lang") || "en";
-document.getElementById("langSelect").value = savedLang;
+langSelect.value = savedLang;
 applyLanguage(savedLang);
 
-/* ------------------ TICKET STORAGE ------------------ */
+/* ------------------ TICKETS ------------------ */
 let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
 
 function saveTickets() {
@@ -202,8 +260,8 @@ function renderTickets() {
                 <div class="ticket-header">
                     <span>${new Date(t.date).toLocaleString()}</span>
                     <div>
-                        <button class="edit-btn" onclick="editTicket(${index})">✏️</button>
-                        <button class="delete-btn" onclick="deleteTicket(${index})">🗑️</button>
+                        <button class="edit-btn" onclick="editTicket(${index})">Edit</button>
+                        <button class="delete-btn" onclick="deleteTicket(${index})">Del</button>
                     </div>
                 </div>
                 <div class="ticket-text">${t.text}</div>
@@ -238,19 +296,63 @@ document.getElementById("sortBtn").addEventListener("click", () => {
     renderTickets();
 });
 
-/* ------------------ QR SCAN ------------------ */
-document.getElementById("scanBtn").addEventListener("click", async () => {
+/* ------------------ QR SCANNER ------------------ */
+const scannerPage = document.getElementById("scannerPage");
+const video = document.getElementById("camera");
+
+document.getElementById("openScanner").onclick = openScanner;
+
+async function openScanner() {
+    scannerPage.style.display = "flex";
+
     try {
-        const text = prompt("Simulated QR scan. Enter text:");
-        if (text) {
-            tickets.unshift({ text, date: Date.now() });
-            saveTickets();
-            renderTickets();
-        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" }
+        });
+        video.srcObject = stream;
+        scanLoop();
     } catch (err) {
-        alert("Camera not available.");
+        alert("Camera access denied.");
+        closeScanner();
     }
-});
+}
+
+function closeScanner() {
+    scannerPage.style.display = "none";
+    stopCamera();
+}
+
+function stopCamera() {
+    const stream = video.srcObject;
+    if (stream) stream.getTracks().forEach(t => t.stop());
+}
+
+function scanLoop() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    function tick() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imgData.data, canvas.width, canvas.height);
+
+            if (code && code.data) {
+                tickets.unshift({ text: code.data, date: Date.now() });
+                saveTickets();
+                renderTickets();
+                closeScanner();
+                return;
+            }
+        }
+        requestAnimationFrame(tick);
+    }
+
+    tick();
+}
 
 /* ------------------ SEARCH ------------------ */
 document.getElementById("searchInput").addEventListener("input", renderTickets);
