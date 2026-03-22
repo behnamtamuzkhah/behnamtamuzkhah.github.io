@@ -4,12 +4,7 @@
   <meta charset="UTF-8" />
   <title>Ticketverwaltung</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <style>
-    /* ---------------------------------------------------
-       iOS 17 Modern Rounded — Clean, Professional, Final
-    --------------------------------------------------- */
-
     :root {
       --bg-light: #f2f2f7;
       --bg-dark: #000000;
@@ -22,14 +17,18 @@
       --border-light: #d1d1d6;
       --border-dark: #3a3a3c;
       --primary: #007aff;
-      --secondary: #ff9500;
       --danger: #ff3b30;
       --success: #34c759;
-      --edit: #5856d6;
       --radius-lg: 18px;
       --radius-md: 12px;
+      --radius-sm: 10px;
       --shadow-light: 0 10px 25px rgba(0,0,0,0.08);
       --shadow-dark: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -40,7 +39,7 @@
       display: flex;
       justify-content: center;
       padding: 16px;
-      transition: background .25s ease, color .25s ease;
+      transition: background 0.25s ease, color 0.25s ease;
     }
 
     body.dark {
@@ -51,18 +50,23 @@
     .app {
       width: 100%;
       max-width: 480px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
+    .status-bar-placeholder {
+      height: 10px;
+    }
+
     .card {
       background: var(--card-light);
       border-radius: 24px;
-      padding: 16px;
+      padding: 14px 14px 18px;
       box-shadow: var(--shadow-light);
-      border: 1px solid rgba(0,0,0,0.05);
-      transition: .25s ease;
+      border: 1px solid rgba(0,0,0,0.02);
+      transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
     body.dark .card {
@@ -71,26 +75,26 @@
       border-color: rgba(255,255,255,0.06);
     }
 
-    /* Header */
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .header-title {
-      font-size: 18px;
       font-weight: 700;
+      font-size: 18px;
       text-align: center;
       flex: 1;
     }
 
     .header-side {
-      width: 90px;
+      width: 72px;
       display: flex;
       gap: 6px;
       align-items: center;
+      justify-content: flex-start;
     }
 
     .header-side.right {
@@ -98,127 +102,220 @@
     }
 
     .icon-btn {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 999px;
       border: 1px solid var(--border-light);
       background: rgba(255,255,255,0.9);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
       cursor: pointer;
-      transition: .2s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
     }
 
     body.dark .icon-btn {
       background: rgba(28,28,30,0.95);
       border-color: var(--border-dark);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
     }
 
     .icon-btn:active {
-      transform: scale(.95);
+      transform: scale(0.96);
     }
 
-    /* Language Switcher */
     .lang-switcher {
-      display: flex;
-      background: rgba(242,242,247,0.9);
+      display: inline-flex;
       border-radius: 999px;
-      border: 1px solid var(--border-light);
       padding: 2px;
-      gap: 2px;
+      background: rgba(242,242,247,0.9);
+      border: 1px solid var(--border-light);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     }
 
     body.dark .lang-switcher {
       background: rgba(28,28,30,0.95);
       border-color: var(--border-dark);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
     }
 
     .lang-btn {
       border: none;
       background: transparent;
-      padding: 4px 8px;
-      border-radius: 999px;
+      color: inherit;
       font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
       cursor: pointer;
-      opacity: .6;
-      transition: .2s ease;
+      opacity: 0.7;
+      transition: background 0.2s ease, opacity 0.2s ease;
+      min-width: 26px;
+      text-align: center;
     }
 
     .lang-btn.active {
-      background: rgba(0,122,255,0.15);
+      background: rgba(0,122,255,0.12);
       opacity: 1;
       font-weight: 600;
     }
 
-    /* Search */
+    body.dark .lang-btn.active {
+      background: rgba(10,132,255,0.3);
+    }
+
     .search-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    .search-input,
-    .select,
-    .field {
-      width: 100%;
+    .search-input {
+      flex: 1;
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-light);
-      padding: 10px 12px;
+      padding: 8px 12px;
       font-size: 14px;
       background: rgba(255,255,255,0.9);
-      transition: .2s ease;
+      color: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
     }
 
-    body.dark .search-input,
-    body.dark .select,
+    body.dark .search-input {
+      background: rgba(28,28,30,0.95);
+      border-color: var(--border-dark);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted-light);
+    }
+
+    body.dark .search-input::placeholder {
+      color: var(--text-muted-dark);
+    }
+
+    .select {
+      min-width: 110px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      padding: 8px 10px;
+      font-size: 13px;
+      background: rgba(255,255,255,0.9);
+      color: inherit;
+      outline: none;
+      appearance: none;
+      position: relative;
+      background-image: linear-gradient(45deg, transparent 50%, #999 50%), linear-gradient(135deg, #999 50%, transparent 50%);
+      background-position: calc(100% - 12px) 11px, calc(100% - 7px) 11px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    body.dark .select {
+      background: rgba(28,28,30,0.95);
+      border-color: var(--border-dark);
+      background-image: linear-gradient(45deg, transparent 50%, #ccc 50%), linear-gradient(135deg, #ccc 50%, transparent 50%);
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .field {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      padding: 8px 12px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.9);
+      color: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
     body.dark .field {
       background: rgba(28,28,30,0.95);
       border-color: var(--border-dark);
     }
 
-    .select {
-      min-width: 110px;
+    .field::placeholder {
+      color: var(--text-muted-light);
     }
 
-    /* Buttons */
+    body.dark .field::placeholder {
+      color: var(--text-muted-dark);
+    }
+
     .actions-row {
       display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
     .btn {
       flex: 1;
-      border: none;
       border-radius: var(--radius-lg);
-      padding: 12px;
+      border: none;
+      padding: 9px 10px;
       font-size: 14px;
       font-weight: 600;
+      cursor: pointer;
       color: #fff;
       background: var(--primary);
-      cursor: pointer;
-      transition: .15s ease;
-    }
-
-    .btn-secondary {
-      background: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 6px 14px rgba(0,122,255,0.35);
+      transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
     .btn:active {
-      transform: scale(.96);
+      transform: scale(0.97);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
     }
 
-    /* Ticket Card */
+    .btn-secondary {
+      background: #ff9500;
+      box-shadow: 0 6px 14px rgba(255,149,0,0.35);
+    }
+
+    body.dark .btn {
+      box-shadow: 0 6px 16px rgba(10,132,255,0.6);
+    }
+
+    body.dark .btn-secondary {
+      box-shadow: 0 6px 16px rgba(255,159,10,0.6);
+    }
+
+    .btn-icon {
+      font-size: 14px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 4px 2px 6px;
+      color: var(--text-muted-light);
+    }
+
+    body.dark .section-title {
+      color: var(--text-muted-dark);
+    }
+
     .ticket-card {
-      background: rgba(255,255,255,0.95);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-light);
-      padding: 12px;
+      padding: 10px 10px 8px;
+      background: rgba(255,255,255,0.95);
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      transition: .25s ease;
+      gap: 6px;
+      transition: background 0.25s ease, border-color 0.25s ease;
     }
 
     body.dark .ticket-card {
@@ -230,6 +327,7 @@
       font-size: 11px;
       color: var(--text-muted-light);
       word-break: break-all;
+      line-height: 1.4;
     }
 
     body.dark .ticket-url {
@@ -243,42 +341,75 @@
 
     .ticket-btn {
       flex: 1;
-      border: none;
       border-radius: var(--radius-md);
-      padding: 7px;
+      border: none;
+      padding: 6px 6px;
       font-size: 11px;
       font-weight: 600;
-      color: #fff;
       cursor: pointer;
-      transition: .15s ease;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: transform 0.1s ease, opacity 0.15s ease;
     }
-
-    .ticket-btn.delete { background: var(--danger); }
-    .ticket-btn.edit { background: var(--edit); }
-    .ticket-btn.done { background: var(--success); }
 
     .ticket-btn:active {
-      transform: scale(.96);
+      transform: scale(0.97);
+      opacity: 0.9;
     }
 
-    /* RTL */
-    .rtl { direction: rtl; }
-    .rtl .search-row { flex-direction: row-reverse; }
-    .rtl .ticket-actions { flex-direction: row-reverse; }
+    .ticket-btn.delete {
+      background: var(--danger);
+    }
+
+    .ticket-btn.edit {
+      background: #5856d6;
+    }
+
+    .ticket-btn.done {
+      background: var(--success);
+    }
+
+    .footer-space {
+      height: 16px;
+    }
+
+    /* RTL handling */
+    .rtl {
+      direction: rtl;
+    }
+
+    .rtl .header-side {
+      flex-direction: row-reverse;
+    }
+
+    .rtl .header-side.right {
+      flex-direction: row;
+    }
+
+    .rtl .search-row {
+      flex-direction: row-reverse;
+    }
+
+    .rtl .ticket-actions {
+      flex-direction: row-reverse;
+    }
   </style>
 </head>
-
 <body>
   <div class="app" id="app">
+    <div class="status-bar-placeholder"></div>
 
     <div class="card">
       <div class="header">
         <div class="header-side">
-          <div class="icon-btn">🌐</div>
+          <div class="icon-btn" title="Language">
+            🌐
+          </div>
         </div>
-
         <div class="header-title" id="titleText">Ticketverwaltung</div>
-
         <div class="header-side right">
           <div class="lang-switcher" id="langSwitcher">
             <button class="lang-btn active" data-lang="DE">DE</button>
@@ -288,94 +419,245 @@
             <button class="lang-btn" data-lang="JP">JP</button>
             <button class="lang-btn" data-lang="FR">FR</button>
           </div>
-
-          <div class="icon-btn" id="themeToggle">🌙</div>
+          <button class="icon-btn" id="themeToggle" title="Theme">
+            🌙
+          </button>
         </div>
       </div>
 
       <div class="search-row">
-        <input id="searchInput" class="search-input" placeholder="Suche..." />
+        <input id="searchInput" class="search-input" type="text" placeholder="Suche..." />
         <select id="sortSelect" class="select">
-          <option>Neueste</option>
-          <option>Älteste</option>
+          <option value="newest">Neueste</option>
+          <option value="oldest">Älteste</option>
         </select>
       </div>
 
-      <input id="titleInput" class="field" placeholder="Ticket Titel" />
-      <input id="noteInput" class="field" placeholder="Notiz" />
-
-      <div class="actions-row">
-        <button class="btn" id="scanBtn">QR scannen</button>
-        <button class="btn btn-secondary" id="addBtn">Ticket hinzufügen</button>
+      <div class="field-group">
+        <input id="titleInput" class="field" type="text" placeholder="Ticket Titel" />
+        <input id="noteInput" class="field" type="text" placeholder="Notiz" />
       </div>
 
+      <div class="actions-row">
+        <button class="btn" id="scanBtn">
+          <span class="btn-icon">▢▢</span>
+          <span id="scanText">QR scannen</span>
+        </button>
+        <button class="btn btn-secondary" id="addBtn">
+          <span class="btn-icon">＋</span>
+          <span id="addText">Ticket hinzufügen</span>
+        </button>
+      </div>
+
+      <div class="section-title" id="ticketsLabel">Tickets</div>
+
       <div class="ticket-card">
-        <div class="ticket-url">
+        <div class="ticket-url" id="ticketUrl">
           https://7melons.ch/de/register#utm_source=Post&utm_medium=KZ&utm_campaign=Kassenzettel&utm_id=887432
         </div>
-
         <div class="ticket-actions">
-          <button class="ticket-btn delete" id="deleteBtn">Löschen</button>
-          <button class="ticket-btn edit" id="editBtn">Bearbeiten</button>
-          <button class="ticket-btn done" id="doneBtn">Erledigt</button>
+          <button class="ticket-btn delete" id="deleteBtn">
+            <span id="deleteText">Löschen</span>
+          </button>
+          <button class="ticket-btn edit" id="editBtn">
+            <span id="editText">Bearbeiten</span>
+          </button>
+          <button class="ticket-btn done" id="doneBtn">
+            <span id="doneText">Erledigt</span>
+          </button>
         </div>
       </div>
     </div>
 
+    <div class="footer-space"></div>
   </div>
 
   <script>
     const strings = {
-      DE:{dir:"ltr",title:"Ticketverwaltung",search:"Suche...",newest:"Neueste",oldest:"Älteste",ticketTitle:"Ticket Titel",note:"Notiz",scan:"QR scannen",add:"Ticket hinzufügen",del:"Löschen",edit:"Bearbeiten",done:"Erledigt"},
-      EN:{dir:"ltr",title:"Ticket Management",search:"Search...",newest:"Newest",oldest:"Oldest",ticketTitle:"Ticket Title",note:"Note",scan:"Scan QR",add:"Add Ticket",del:"Delete",edit:"Edit",done:"Done"},
-      FA:{dir:"rtl",title:"مدیریت تیکت‌ها",search:"...جستجو",newest:"جدیدترین",oldest:"قدیمی‌ترین",ticketTitle:"عنوان تیکت",note:"یادداشت",scan:"اسکن QR",add:"افزودن تیکت",del:"حذف",edit:"ویرایش",done:"انجام شد"},
-      HE:{dir:"rtl",title:"ניהול כרטיסים",search:"...חיפוש",newest:"החדשים ביותר",oldest:"הישנים ביותר",ticketTitle:"כותרת הכרטיס",note:"הערה",scan:"סרוק QR",add:"הוספת כרטיס",del:"למחוק",edit:"עריכה",done:"בוצע"},
-      JP:{dir:"ltr",title:"チケット管理",search:"検索…",newest:"最新",oldest:"最古",ticketTitle:"チケットタイトル",note:"メモ",scan:"QRコード読み取り",add:"チケット追加",del:"削除",edit:"編集",done:"完了"},
-      FR:{dir:"ltr",title:"Gestion des Tickets",search:"Recherche...",newest:"Plus récent",oldest:"Plus ancien",ticketTitle:"Titre du ticket",note:"Note",scan:"Scanner QR",add:"Ajouter un ticket",del:"Supprimer",edit:"Modifier",done:"Terminé"}
+      DE: {
+        dir: "ltr",
+        title: "Ticketverwaltung",
+        search: "Suche...",
+        newest: "Neueste",
+        oldest: "Älteste",
+        ticketTitle: "Ticket Titel",
+        note: "Notiz",
+        scanQR: "QR scannen",
+        addTicket: "Ticket hinzufügen",
+        tickets: "Tickets",
+        delete: "Löschen",
+        edit: "Bearbeiten",
+        done: "Erledigt"
+      },
+      EN: {
+        dir: "ltr",
+        title: "Ticket Management",
+        search: "Search...",
+        newest: "Newest",
+        oldest: "Oldest",
+        ticketTitle: "Ticket Title",
+        note: "Note",
+        scanQR: "Scan QR",
+        addTicket: "Add Ticket",
+        tickets: "Tickets",
+        delete: "Delete",
+        edit: "Edit",
+        done: "Done"
+      },
+      FA: {
+        dir: "rtl",
+        title: "مدیریت تیکت‌ها",
+        search: "...جستجو",
+        newest: "جدیدترین",
+        oldest: "قدیمی‌ترین",
+        ticketTitle: "عنوان تیکت",
+        note: "یادداشت",
+        scanQR: "اسکن QR",
+        addTicket: "افزودن تیکت",
+        tickets: "تیکت‌ها",
+        delete: "حذف",
+        edit: "ویرایش",
+        done: "انجام شد"
+      },
+      HE: {
+        dir: "rtl",
+        title: "ניהול כרטיסים",
+        search: "...חיפוש",
+        newest: "החדשים ביותר",
+        oldest: "הישנים ביותר",
+        ticketTitle: "כותרת הכרטיס",
+        note: "הערה",
+        scanQR: "סרוק QR",
+        addTicket: "הוספת כרטיס",
+        tickets: "כרטיסים",
+        delete: "למחוק",
+        edit: "עריכה",
+        done: "בוצע"
+      },
+      JP: {
+        dir: "ltr",
+        title: "チケット管理",
+        search: "検索…",
+        newest: "最新",
+        oldest: "最古",
+        ticketTitle: "チケットタイトル",
+        note: "メモ",
+        scanQR: "QRコード読み取り",
+        addTicket: "チケット追加",
+        tickets: "チケット",
+        delete: "削除",
+        edit: "編集",
+        done: "完了"
+      },
+      FR: {
+        dir: "ltr",
+        title: "Gestion des Tickets",
+        search: "Recherche...",
+        newest: "Plus récent",
+        oldest: "Plus ancien",
+        ticketTitle: "Titre du ticket",
+        note: "Note",
+        scanQR: "Scanner QR",
+        addTicket: "Ajouter un ticket",
+        tickets: "Tickets",
+        delete: "Supprimer",
+        edit: "Modifier",
+        done: "Terminé"
+      }
     };
 
-    const app=document.getElementById("app");
-    const titleText=document.getElementById("titleText");
-    const searchInput=document.getElementById("searchInput");
-    const sortSelect=document.getElementById("sortSelect");
-    const titleInput=document.getElementById("titleInput");
-    const noteInput=document.getElementById("noteInput");
-    const scanBtn=document.getElementById("scanBtn");
-    const addBtn=document.getElementById("addBtn");
-    const deleteBtn=document.getElementById("deleteBtn");
-    const editBtn=document.getElementById("editBtn");
-    const doneBtn=document.getElementById("doneBtn");
+    const app = document.getElementById("app");
+    const titleText = document.getElementById("titleText");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const titleInput = document.getElementById("titleInput");
+    const noteInput = document.getElementById("noteInput");
+    const scanText = document.getElementById("scanText");
+    const addText = document.getElementById("addText");
+    const ticketsLabel = document.getElementById("ticketsLabel");
+    const deleteText = document.getElementById("deleteText");
+    const editText = document.getElementById("editText");
+    const doneText = document.getElementById("doneText");
+    const langSwitcher = document.getElementById("langSwitcher");
+    const themeToggle = document.getElementById("themeToggle");
+    const scanBtn = document.getElementById("scanBtn");
+    const addBtn = document.getElementById("addBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+    const editBtn = document.getElementById("editBtn");
+    const doneBtn = document.getElementById("doneBtn");
 
-    document.getElementById("langSwitcher").addEventListener("click",e=>{
-      const btn=e.target.closest(".lang-btn");
-      if(!btn)return;
-      const lang=btn.dataset.lang;
-      const s=strings[lang];
+    let currentLang = "DE";
 
-      document.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
+    function applyLang(lang) {
+      const s = strings[lang];
+      if (!s) return;
+      currentLang = lang;
 
-      document.documentElement.dir=s.dir;
-      if(s.dir==="rtl") app.classList.add("rtl");
-      else app.classList.remove("rtl");
+      // direction
+      if (s.dir === "rtl") {
+        app.classList.add("rtl");
+      } else {
+        app.classList.remove("rtl");
+      }
 
-      titleText.textContent=s.title;
-      searchInput.placeholder=s.search;
-      sortSelect.options[0].textContent=s.newest;
-      sortSelect.options[1].textContent=s.oldest;
-      titleInput.placeholder=s.ticketTitle;
-      noteInput.placeholder=s.note;
-      scanBtn.textContent=s.scan;
-      addBtn.textContent=s.add;
-      deleteBtn.textContent=s.del;
-      editBtn.textContent=s.edit;
-      doneBtn.textContent=s.done;
+      // texts
+      titleText.textContent = s.title;
+      searchInput.placeholder = s.search;
+      sortSelect.options[0].textContent = s.newest;
+      sortSelect.options[1].textContent = s.oldest;
+      titleInput.placeholder = s.ticketTitle;
+      noteInput.placeholder = s.note;
+      scanText.textContent = s.scanQR;
+      addText.textContent = s.addTicket;
+      ticketsLabel.textContent = s.tickets;
+      deleteText.textContent = s.delete;
+      editText.textContent = s.edit;
+      doneText.textContent = s.done;
+
+      // lang buttons
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+      });
+
+      // html lang attribute
+      document.documentElement.lang = lang.toLowerCase();
+      document.documentElement.dir = s.dir;
+    }
+
+    langSwitcher.addEventListener("click", (e) => {
+      const btn = e.target.closest(".lang-btn");
+      if (!btn) return;
+      applyLang(btn.dataset.lang);
     });
 
-    document.getElementById("themeToggle").addEventListener("click",()=>{
+    themeToggle.addEventListener("click", () => {
       document.body.classList.toggle("dark");
-      event.target.textContent=document.body.classList.contains("dark")?"☀️":"🌙";
+      const isDark = document.body.classList.contains("dark");
+      themeToggle.textContent = isDark ? "☀️" : "🌙";
     });
+
+    scanBtn.addEventListener("click", () => {
+      alert("QR scan placeholder – اینجا بعداً اسکن واقعی اضافه می‌کنیم.");
+    });
+
+    addBtn.addEventListener("click", () => {
+      alert("Add Ticket placeholder – منطق ذخیره‌سازی را بعداً وصل می‌کنیم.");
+    });
+
+    deleteBtn.addEventListener("click", () => {
+      alert("Delete placeholder.");
+    });
+
+    editBtn.addEventListener("click", () => {
+      alert("Edit placeholder.");
+    });
+
+    doneBtn.addEventListener("click", () => {
+      alert("Done placeholder.");
+    });
+
+    // initial
+    applyLang(currentLang);
   </script>
 </body>
 </html>
