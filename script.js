@@ -1,7 +1,5 @@
-// جلوگیری از bounce و اسکرول ناخواسته در iPhone
-document.addEventListener('touchmove', function(e) {
-  e.preventDefault();
-}, { passive: false });
+// جلوگیری از اسکرول ناخواسته iPhone
+document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
 document.addEventListener("DOMContentLoaded", () => {
   const titleInput = document.getElementById("ticketTitle");
@@ -18,27 +16,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
   let scanning = false;
   let stream = null;
-  let detector = null;
 
+  // نمایش تیکت‌های ذخیره‌شده
   tickets.forEach(t => renderTicket(t));
 
   function saveTickets() {
     localStorage.setItem("tickets", JSON.stringify(tickets));
   }
 
+  // افزودن تیکت
   addBtn.addEventListener("click", () => {
     const title = titleInput.value.trim();
     const note = noteInput.value.trim();
+    if (!title) return alert("عنوان لازم است");
 
-    if (!title) return alert("لطفاً عنوان تیکت را وارد کنید");
-
-    const ticket = {
-      id: Date.now(),
-      title,
-      note,
-      done: false
-    };
-
+    const ticket = { id: Date.now(), title, note, done: false };
     tickets.push(ticket);
     saveTickets();
     renderTicket(ticket);
@@ -47,53 +39,37 @@ document.addEventListener("DOMContentLoaded", () => {
     noteInput.value = "";
   });
 
+  // رندر تیکت
   function renderTicket(ticket) {
     const li = document.createElement("li");
     li.className = "ticket-item";
     if (ticket.done) li.classList.add("done");
 
-    const header = document.createElement("div");
-    header.className = "ticket-item-header";
+    li.innerHTML = `
+      <div class="ticket-title">${ticket.title}</div>
+      <div class="ticket-note">${ticket.note}</div>
+      <div class="ticket-actions">
+        <button class="ticket-btn done">انجام شد</button>
+        <button class="ticket-btn edit">ویرایش</button>
+        <button class="ticket-btn delete">حذف</button>
+      </div>
+    `;
 
-    const titleEl = document.createElement("span");
-    titleEl.className = "ticket-title";
-    titleEl.textContent = ticket.title;
-
-    const noteEl = document.createElement("div");
-    noteEl.className = "ticket-note";
-    noteEl.textContent = ticket.note;
-
-    const actions = document.createElement("div");
-    actions.className = "ticket-actions";
-
-    const doneBtn = document.createElement("button");
-    doneBtn.className = "ticket-btn done";
-    doneBtn.textContent = "انجام شد";
-
-    const editBtn = document.createElement("button");
-    editBtn.className = "ticket-btn edit";
-    editBtn.textContent = "ویرایش";
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "ticket-btn delete";
-    deleteBtn.textContent = "حذف";
-
-    doneBtn.addEventListener("click", () => {
+    li.querySelector(".done").onclick = () => {
       ticket.done = !ticket.done;
       saveTickets();
       li.classList.toggle("done");
-    });
+    };
 
-    deleteBtn.addEventListener("click", () => {
+    li.querySelector(".delete").onclick = () => {
       tickets = tickets.filter(t => t.id !== ticket.id);
       saveTickets();
       li.remove();
-    });
+    };
 
-    editBtn.addEventListener("click", () => {
+    li.querySelector(".edit").onclick = () => {
       const newTitle = prompt("عنوان جدید:", ticket.title);
       if (!newTitle) return;
-
       const newNote = prompt("یادداشت جدید:", ticket.note);
       if (newNote === null) return;
 
@@ -101,24 +77,19 @@ document.addEventListener("DOMContentLoaded", () => {
       ticket.note = newNote.trim();
       saveTickets();
 
-      titleEl.textContent = ticket.title;
-      noteEl.textContent = ticket.note;
-    });
+      li.querySelector(".ticket-title").textContent = ticket.title;
+      li.querySelector(".ticket-note").textContent = ticket.note;
+    };
 
-    actions.append(doneBtn, editBtn, deleteBtn);
-    header.append(titleEl);
-    li.append(header, noteEl, actions);
     ticketList.append(li);
   }
 
   // جستجو
   searchInput.addEventListener("input", () => {
     const q = searchInput.value.trim().toLowerCase();
-
     document.querySelectorAll(".ticket-item").forEach(item => {
       const title = item.querySelector(".ticket-title").textContent.toLowerCase();
       const note = item.querySelector(".ticket-note").textContent.toLowerCase();
-
       item.style.display = (title.includes(q) || note.includes(q)) ? "flex" : "none";
     });
   });
@@ -126,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // مرتب‌سازی
   sortSelect.addEventListener("change", () => {
     const mode = sortSelect.value;
-
     let sorted = [...tickets];
 
     if (mode === "newest") sorted.sort((a, b) => b.id - a.id);
@@ -138,25 +108,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // -------------------------------
-  // QR Scanner — حالت C (ساخت تیکت کامل)
+  // QR Scanner — jsQR (نسخه ۱۰۰٪ سازگار با iPhone)
   // -------------------------------
   scanQrBtn.addEventListener("click", async () => {
-    if (!("BarcodeDetector" in window)) {
-      alert("این دستگاه از QR Scanner پشتیبانی نمی‌کند.");
-      return;
-    }
-
     try {
-      detector = new BarcodeDetector({ formats: ["qr_code"] });
-
       stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" }
       });
 
       qrVideo.srcObject = stream;
-      qrVideo.setAttribute("playsinline", true);
-      qrVideo.setAttribute("muted", true);
-      qrVideo.setAttribute("autoplay", true);
       await qrVideo.play();
 
       qrSection.style.display = "block";
@@ -169,38 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  async function scanLoop() {
-    if (!scanning) return;
-
-    try {
-      const results = await detector.detect(qrVideo);
-
-      if (results.length > 0) {
-        const qr = results[0].rawValue;
-
-        stopScan();
-
-        const ticket = {
-          id: Date.now(),
-          title: qr,
-          note: "",
-          done: false
-        };
-
-        tickets.push(ticket);
-        saveTickets();
-        renderTicket(ticket);
-
-        alert("QR ثبت شد:\n" + qr);
-        return;
-      }
-    } catch (e) {
-      console.log("Detector error:", e);
-    }
-
-    requestAnimationFrame(scanLoop);
-  }
-
   function stopScan() {
     scanning = false;
     scanQrBtn.textContent = "اسکن QR";
@@ -210,5 +138,46 @@ document.addEventListener("DOMContentLoaded", () => {
       stream.getTracks().forEach(t => t.stop());
       stream = null;
     }
+  }
+
+  // حلقهٔ اسکن — نسخهٔ درست‌شده
+  function scanLoop() {
+    if (!scanning) return;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = qrVideo.videoWidth;
+    canvas.height = qrVideo.videoHeight;
+
+    ctx.drawImage(qrVideo, 0, 0, canvas.width, canvas.height);
+
+    // فقط وسط تصویر را اسکن کن
+    const size = Math.min(canvas.width, canvas.height) * 0.6;
+    const sx = (canvas.width - size) / 2;
+    const sy = (canvas.height - size) / 2;
+
+    const imgData = ctx.getImageData(sx, sy, size, size);
+    const code = jsQR(imgData.data, size, size);
+
+    if (code && code.data) {
+      stopScan();
+
+      const ticket = {
+        id: Date.now(),
+        title: code.data,
+        note: "",
+        done: false
+      };
+
+      tickets.push(ticket);
+      saveTickets();
+      renderTicket(ticket);
+
+      alert("QR ثبت شد:\n" + code.data);
+      return;
+    }
+
+    requestAnimationFrame(scanLoop);
   }
 });
